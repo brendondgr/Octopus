@@ -1,18 +1,8 @@
-from flask import Blueprint, render_template
-
-bp = Blueprint('main', __name__)
-
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, make_response
 from . import db
-from .models import Project
+from .models import Project, Category, Goal
 from datetime import datetime
-
-bp = Blueprint('main', __name__)
-
-from flask import Blueprint, render_template, request, jsonify
-from . import db
-from .models import Project, Category
-from datetime import datetime
+import json
 
 bp = Blueprint('main', __name__)
 
@@ -78,3 +68,105 @@ def update_project(project_id):
         
     db.session.commit()
     return jsonify({'success': True})
+
+
+# =====================
+# Project Details Modal
+# =====================
+@bp.route('/project/<int:project_id>/details', methods=['GET'])
+def project_details(project_id):
+    project = Project.query.get_or_404(project_id)
+    return render_template('components/modals/project_details.html', project=project)
+
+
+# ================
+# Goal Management
+# ================
+@bp.route('/project/<int:project_id>/goal', methods=['POST'])
+def create_goal(project_id):
+    project = Project.query.get_or_404(project_id)
+    title = request.form.get('title', '').strip()
+    
+    if not title:
+        return '', 400
+    
+    goal = Goal(
+        project_id=project.id,
+        title=title,
+        status='Pending'
+    )
+    db.session.add(goal)
+    db.session.commit()
+    
+    # Prepare progress data for trigger
+    completed = sum(1 for g in project.goals if g.status == 'Completed')
+    trigger_data = {
+        "updateProgress": {
+            "projectId": project.id,
+            "progress": project.calculate_progress(),
+            "goalCount": f"{completed}/{len(project.goals)}"
+        }
+    }
+    
+    response = make_response(render_template('components/goal_item.html', goal=goal))
+    response.headers['HX-Trigger'] = json.dumps(trigger_data)
+    return response
+
+
+@bp.route('/goal/<int:goal_id>/toggle', methods=['POST'])
+def toggle_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    project = goal.project
+    
+    if goal.status == 'Pending':
+        goal.status = 'Completed'
+        goal.date_completed = datetime.utcnow()
+    else:
+        goal.status = 'Pending'
+        goal.date_completed = None
+    
+    db.session.commit()
+    
+    # Prepare progress data for trigger
+    completed = sum(1 for g in project.goals if g.status == 'Completed')
+    trigger_data = {
+        "updateProgress": {
+            "projectId": project.id,
+            "progress": project.calculate_progress(),
+            "goalCount": f"{completed}/{len(project.goals)}"
+        }
+    }
+    
+    response = make_response(render_template('components/goal_item.html', goal=goal))
+    response.headers['HX-Trigger'] = json.dumps(trigger_data)
+    return response
+
+
+@bp.route('/goal/<int:goal_id>', methods=['DELETE'])
+def delete_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    project = goal.project
+    db.session.delete(goal)
+    db.session.commit()
+    
+    # Prepare progress data for trigger
+    completed = sum(1 for g in project.goals if g.status == 'Completed')
+    trigger_data = {
+        "updateProgress": {
+            "projectId": project.id,
+            "progress": project.calculate_progress(),
+            "goalCount": f"{completed}/{len(project.goals)}"
+        }
+    }
+    
+    response = make_response('')
+    response.headers['HX-Trigger'] = json.dumps(trigger_data)
+    return response
+
+
+@bp.route('/project/<int:project_id>/progress', methods=['GET'])
+def project_progress(project_id):
+    """Return updated progress bar for a project"""
+    project = Project.query.get_or_404(project_id)
+    progress = project.calculate_progress()
+    return f'<div class="progress-bar" style="width: {progress}%"></div>'

@@ -1,0 +1,96 @@
+<div class="modal-backdrop" onclick="this.remove()">
+    <div class="modal modal-lg" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title-section">
+                <span class="category-badge cat-{{ project.category.color|lower }}">{{ project.category.name }}</span>
+                <h3>{{ project.title }}</h3>
+            </div>
+            <button class="btn-icon" onclick="this.closest('.modal-backdrop').remove()">×</button>
+        </div>
+        
+        <!-- Project Info -->
+        <div class="project-info">
+            {% if project.description %}
+                <p class="project-description">{{ project.description }}</p>
+            {% endif %}
+            <div class="project-meta">
+                <span class="meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Created {{ project.date_created.strftime('%b %d, %Y') }}
+                </span>
+                {% if project.deadline %}
+                <span class="meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Due {{ project.deadline.strftime('%b %d, %Y') }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="modal-divider">
+
+        <!-- Goals Section -->
+        <div class="goals-section">
+            <div class="goals-header">
+                <h4>Goals</h4>
+                <span id="goal-count-{{ project.id }}" class="goal-count">{{ project.goals|selectattr('status', 'equalto', 'Completed')|list|length }}/{{ project.goals|length }}</span>
+            </div>
+            
+            <!-- Goals List -->
+            <div class="goals-list" id="goals-list-{{ project.id }}">
+                {% for goal in project.goals %}
+                    {% include 'components/goal_item.html' %}
+                {% else %}
+                    <div class="goals-empty" id="goals-empty-{{ project.id }}">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>No goals yet. Add one below!</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Add Goal Form -->
+            <form class="add-goal-form"
+                  hx-post="/project/{{ project.id }}/goal"
+                  hx-target="#goals-list-{{ project.id }}"
+                  hx-swap="beforeend"
+                  hx-on::after-request="this.reset(); document.getElementById('goals-empty-{{ project.id }}')?.remove();">
+                <input type="text" 
+                       name="title" 
+                       placeholder="Add a new goal..." 
+                       required
+                       autocomplete="off">
+                <button type="submit" class="btn-add-goal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Progress Footer -->
+        <div class="modal-progress">
+            <span class="progress-label">Progress</span>
+            <div class="progress-container lg" id="modal-progress-{{ project.id }}"
+                 hx-get="/project/{{ project.id }}/progress"
+                 hx-trigger="goal-changed from:body"
+                 hx-swap="innerHTML">
+                <div class="progress-bar" style="width: {{ project.calculate_progress() }}%"></div>
+            </div>
+            <span id="modal-progress-percent-{{ project.id }}" class="progress-percent">{{ project.calculate_progress() }}%</span>
+        </div>
+    </div>
+</div>

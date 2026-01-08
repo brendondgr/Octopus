@@ -1,0 +1,19 @@
+<!-- Out-of-band progress updates for both modal and main page -->
+
+<!-- Update Modal Progress Percent -->
+<span id="modal-progress-percent-{{ project.id }}" class="progress-percent" hx-swap-oob="outerHTML">{{ project.calculate_progress() }}%</span>
+
+<!-- Update Modal Goal Count -->
+<span id="goal-count-{{ project.id }}" class="goal-count" hx-swap-oob="outerHTML">{{ project.goals|selectattr('status', 'equalto', 'Completed')|list|length }}/{{ project.goals|length }}</span>
+
+<!-- Smooth animated width update via micro-script -->
+<script hx-swap-oob="true">
+(function() {
+    const progress = {{ project.calculate_progress() }};
+    const modalBar = document.querySelector('#modal-progress-{{ project.id }} .progress-bar');
+    const cardBar = document.querySelector('#progress-{{ project.id }} .progress-bar');
+    
+    if (modalBar) modalBar.style.width = progress + '%';
+    if (cardBar) cardBar.style.width = progress + '%';
+})();
+</script>

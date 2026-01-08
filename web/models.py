@@ -29,6 +29,16 @@ class Project(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     deadline = db.Column(db.DateTime, nullable=True)
 
+    # Relationship to Goals
+    goals = db.relationship('Goal', backref='project', lazy=True, cascade='all, delete-orphan')
+
+    def calculate_progress(self):
+        """Calculate progress based on completed goals"""
+        if not self.goals:
+            return 0
+        completed = sum(1 for goal in self.goals if goal.status == 'Completed')
+        return int((completed / len(self.goals)) * 100)
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -36,8 +46,29 @@ class Project(db.Model):
             'description': self.description,
             'status': self.status,
             'category': self.category.to_dict() if self.category else None,
-            'progress': self.progress,
+            'progress': self.calculate_progress(),
             'order_index': self.order_index,
             'date_created': self.date_created.isoformat() if self.date_created else None,
+            'deadline': self.deadline.isoformat() if self.deadline else None
+        }
+
+
+class Goal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(20), default='Pending', nullable=False)  # Pending, Completed
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_completed = db.Column(db.DateTime, nullable=True)
+    deadline = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'project_id': self.project_id,
+            'title': self.title,
+            'status': self.status,
+            'date_created': self.date_created.isoformat() if self.date_created else None,
+            'date_completed': self.date_completed.isoformat() if self.date_completed else None,
             'deadline': self.deadline.isoformat() if self.deadline else None
         }
