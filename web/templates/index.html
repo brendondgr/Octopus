@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-grid">
+    
+    <!-- Active Column -->
+    <div class="status-column" id="col-active" data-status="Active">
+        <div class="column-header">
+            <span class="column-title">Active</span>
+            <span class="badge-count">{{ projects|selectattr("status", "equalto", "Active")|list|length }}</span>
+        </div>
+        {% for project in projects if project.status == 'Active' %}
+            {% include 'components/project_card.html' %}
+        {% endfor %}
+    </div>
+
+    <!-- Completed Column -->
+    <div class="status-column" id="col-completed" data-status="Completed">
+        <div class="column-header">
+            <span class="column-title">Completed</span>
+            <span class="badge-count">{{ projects|selectattr("status", "equalto", "Completed")|list|length }}</span>
+        </div>
+        {% for project in projects if project.status == 'Completed' %}
+            {% include 'components/project_card.html' %}
+        {% endfor %}
+    </div>
+
+    <!-- On-Hold Column -->
+    <div class="status-column" id="col-on-hold" data-status="On-Hold">
+        <div class="column-header">
+            <span class="column-title">On Hold</span>
+            <span class="badge-count">{{ projects|selectattr("status", "equalto", "On-Hold")|list|length }}</span>
+        </div>
+        {% for project in projects if project.status == 'On-Hold' %}
+            {% include 'components/project_card.html' %}
+        {% endfor %}
+    </div>
+
+    <!-- Abandoned Column -->
+    <div class="status-column" id="col-abandoned" data-status="Abandoned">
+        <div class="column-header">
+            <span class="column-title">Abandoned</span>
+            <span class="badge-count">{{ projects|selectattr("status", "equalto", "Abandoned")|list|length }}</span>
+        </div>
+        {% for project in projects if project.status == 'Abandoned' %}
+            {% include 'components/project_card.html' %}
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

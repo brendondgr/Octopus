@@ -1,0 +1,234 @@
+@import 'variables.css';
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    font-family: var(--font-body);
+    color: var(--color-text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+/* Utilities */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Layout - Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    align-items: start; /* Don't stretch columns */
+    padding-bottom: 4rem;
+}
+
+/* Columns */
+.status-column {
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    min-height: 400px; /* Drop target area */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* Column Specific Colors */
+#col-active { background-color: #f0f9ff; border-top: 4px solid var(--cat-blue-border); }
+#col-completed { background-color: #f0fdf4; border-top: 4px solid var(--cat-green-border); }
+#col-on-hold { background-color: #fffbeb; border-top: 4px solid var(--cat-orange-border); }
+#col-abandoned { background-color: #fef2f2; border-top: 4px solid var(--cat-red-border); }
+
+.column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.column-title {
+    font-size: 1.1rem;
+    color: var(--color-text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+.badge-count {
+    background: rgba(255,255,255,0.7);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-main);
+    font-weight: 600;
+}
+
+/* Cards */
+.project-card {
+    background: var(--color-surface-elevated);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease;
+    border: 1px solid var(--color-border);
+    user-select: none; /* Prevent text selection during drag */
+    touch-action: none; /* Critical for Pointer Events */
+    position: relative; /* Needed for z-index context */
+}
+
+.drag-handle {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    cursor: grab;
+    color: var(--color-text-muted);
+    padding: 0.25rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.drag-handle:hover {
+    opacity: 1;
+}
+
+.project-card.is-dragging .drag-handle {
+    cursor: grabbing;
+}
+
+/* Dragging State - The element being moved */
+.project-card.is-dragging {
+    position: fixed; /* Break out of flow */
+    z-index: 1000;
+    cursor: grabbing;
+    box-shadow: var(--shadow-xl);
+    transform: scale(1.05) rotate(2deg); /* Lift effect */
+    pointer-events: none; /* Let events pass through to drop targets */
+    width: var(--drag-width); /* Maintain width */
+    height: var(--drag-height);
+}
+
+/* Placeholder - The empty space left behind */
+.card-placeholder {
+    background: rgba(0,0,0,0.03);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--color-border);
+    margin-bottom: 1rem; /* Match gap */
+    width: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Card Content */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+.category-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+}
+
+/* Dynamic Classes for Categories */
+.cat-blue { background: var(--cat-blue-bg); border: 1px solid var(--cat-blue-border); color: var(--cat-blue-text); }
+.cat-green { background: var(--cat-green-bg); border: 1px solid var(--cat-green-border); color: var(--cat-green-text); }
+.cat-purple { background: var(--cat-purple-bg); border: 1px solid var(--cat-purple-border); color: var(--cat-purple-text); }
+.cat-orange { background: var(--cat-orange-bg); border: 1px solid var(--cat-orange-border); color: var(--cat-orange-text); }
+.cat-red { background: var(--cat-red-bg); border: 1px solid var(--cat-red-border); color: var(--cat-red-text); }
+
+.card-title {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-main);
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Progress Bar */
+.progress-container {
+    height: 6px;
+    background: var(--color-bg);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 999px;
+}
+
+/* Header */
+header {
+    padding: 1rem 0;
+    background: rgba(254, 251, 246, 0.8);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(255, 107, 107, 0.3);
+}
