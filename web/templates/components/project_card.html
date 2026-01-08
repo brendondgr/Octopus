@@ -3,7 +3,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="5" x2="5" y2="19"></line><line x1="19" y1="5" x2="19" y2="19"></line></svg>
     </div>
     <div class="card-header">
-        <span class="category-badge cat-{{ project.category|lower }}">{{ project.category }}</span>
+        <span class="category-badge cat-{{ project.category.color|lower }}">{{ project.category.name }}</span>
     </div>
     <h3 class="card-title">{{ project.title }}</h3>
     <p class="card-desc">{{ project.description }}</p>

@@ -1,0 +1,73 @@
+<div class="modal-backdrop" onclick="this.remove()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>New Project</h3>
+            <button class="btn-icon" onclick="this.closest('.modal-backdrop').remove()">×</button>
+        </div>
+        <form hx-post="/project/new" 
+              hx-target="#col-active" 
+              hx-swap="beforeend"
+              hx-on::after-request="this.closest('.modal-backdrop').remove()">
+            
+            <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" name="title" required placeholder="e.g. Website Redesign" autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Brief details..."></textarea>
+            </div>
+
+            <div class="category-section">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" 
+                           name="category_name" 
+                           list="category-suggestions" 
+                           required 
+                           placeholder="Type or select category..."
+                           id="cat-name-input">
+                    <datalist id="category-suggestions">
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}" data-color="{{ cat.color }}"></option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category Color</label>
+                    <div class="color-picker">
+                        {% set colors = ['blue', 'green', 'purple', 'orange', 'red', 'teal', 'yellow', 'pink', 'indigo', 'gray'] %}
+                        {% for color in colors %}
+                            <label class="color-swatch">
+                                <input type="radio" name="category_color" value="{{ color }}" {% if loop.first %}checked{% endif %}>
+                                <span class="swatch-circle bg-{{ color }}"></span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="this.closest('.modal-backdrop').remove()">Cancel</button>
+                <button type="submit" class="btn-primary">Create Project</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Auto-select color when existing category is chosen
+        document.getElementById('cat-name-input').addEventListener('input', function(e) {
+            const val = e.target.value;
+            const options = document.getElementById('category-suggestions').options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === val) {
+                    const color = options[i].getAttribute('data-color');
+                    const radio = document.querySelector(`input[name="category_color"][value="${color}"]`);
+                    if (radio) radio.checked = true;
+                    break;
+                }
+            }
+        });
+    </script>
+</div>

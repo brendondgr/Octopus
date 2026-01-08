@@ -77,9 +77,13 @@ Octopus/
 
 ## 5. UI/UX Strategy
 
-- **Drag-and-Drop**: Implemented via HTML5 Drag and Drop API or a lightweight library (SortableJS is common, but Vanilla JS requested if possible).
+- **Drag-and-Drop**: Implemented via a custom **Pointer Events** system (rather than the native HTML5 API) to ensure "zero-ghosting" and maximum smoothness.
+  - **Grip Handle**: Interactions are restricted to a specific `|||` drag-handle on each card to prevent accidental moves.
+  - **Physics**: Uses CSS transitions and absolute positioning for high-fidelity "lifting" and "snapping" effects.
+- **Status Dashboard**: The interface is divided into **4 separate areas** (Active, Completed, On-Hold, Abandoned).
+  - **Visual Clarity**: Each column features a unique, distinct background color and border accent to prevent categorization confusion.
 - **HTMX Integration**:
-  - Clicking a "Checkmark" sends a POST request to update status and swaps the specific Goal HTML element.
-  - Dragging a card sends a PATCH request to update the order.
-  - Opening a modal fetches content via GET request.
+  - Clicking a "Checkmark" sends a POST request to update status and swaps the specific Goal HTML element (Planned).
+  - Dragging a card will eventually send a PATCH request to update its status/order in the database.
+  - Modals fetch dynamic content via GET requests (Planned).
 - **Design System**: Strict adherence to `@docs/ui.md`.

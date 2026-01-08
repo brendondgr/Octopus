@@ -130,8 +130,30 @@ function initDragAndDrop() {
             const newColumn = placeholder.closest('.status-column');
             if (newColumn) {
                 const newStatus = newColumn.dataset.status;
+                
+                // Only trigger update if status changed or moved columns
+                // (For full reordering, we'd always trigger, but let's start with status)
+                const oldStatus = activeCard.dataset.status;
                 activeCard.dataset.status = newStatus;
-                // Add visual confirmation or htmx trigger here
+
+                // Send persistence request
+                const projectId = activeCard.dataset.id;
+                
+                // We use fetch here for simplicity, or we could trigger an htmx event
+                const formData = new FormData();
+                formData.append('status', newStatus);
+                
+                fetch(`/project/${projectId}`, {
+                    method: 'PATCH',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Project updated');
+                    } else {
+                        console.error('Update failed');
+                        // Ideally revert UI here
+                    }
+                }).catch(err => console.error('Network error', err));
             }
         }
 

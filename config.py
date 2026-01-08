@@ -2,4 +2,5 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess-octopus-key'
-    # database config will go here later
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///octopus.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False

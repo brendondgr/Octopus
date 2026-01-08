@@ -21,13 +21,20 @@
     <header>
         <div class="container header-content">
             <div class="brand">Octopus</div>
-            <button class="btn-primary">+ New Project</button>
+            <button class="btn-primary" 
+                    hx-get="/project/modal/new" 
+                    hx-target="#modal-container" 
+                    hx-swap="innerHTML">
+                + New Project
+            </button>
         </div>
     </header>
 
     <main class="container">
         {% block content %}{% endblock %}
     </main>
+
+    <div id="modal-container"></div>
 
     <!-- JS -->
     <script src="{{ url_for('static', filename='js/drag_drop.js') }}"></script>
