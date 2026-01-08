@@ -161,6 +161,9 @@ h1, h2, h3, h4, h5, h6 {
 .cat-purple { background: var(--cat-purple-bg); border: 1px solid var(--cat-purple-border); color: var(--cat-purple-text); }
 .cat-orange { background: var(--cat-orange-bg); border: 1px solid var(--cat-orange-border); color: var(--cat-orange-text); }
 .cat-red { background: var(--cat-red-bg); border: 1px solid var(--cat-red-border); color: var(--cat-red-text); }
+.cat-teal { background: var(--cat-teal-bg); border: 1px solid var(--cat-teal-border); color: var(--cat-teal-text); }
+.cat-yellow { background: var(--cat-yellow-bg); border: 1px solid var(--cat-yellow-border); color: var(--cat-yellow-text); }
+.cat-pink { background: var(--cat-pink-bg); border: 1px solid var(--cat-pink-border); color: var(--cat-pink-text); }
 
 .card-title {
     font-size: 1.125rem;
@@ -330,6 +333,11 @@ header {
     background: var(--color-bg);
 }
 
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -349,71 +357,146 @@ header {
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Category Picker & Color Swatches */
-.category-section {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+/* Vertical Layout for Modal Section */
+.category-section-styled.vertical {
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.category-section .form-group {
-    flex: 1;
+.full-width {
+    width: 100%;
 }
 
-.color-picker {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    padding: 0.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-bg);
+/* Color Grid 2x4 */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    width: 100%;
 }
 
-.color-swatch {
-    cursor: pointer;
+.badge-option {
     position: relative;
+    cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
-.color-swatch input {
+.badge-option input {
     position: absolute;
     opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Force Badge to be clickable & full size in grid */
+.badge-option .category-badge {
     width: 100%;
-    height: 100%;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.swatch-circle {
-    display: block;
-    width: 24px;
-    height: 24px;
-    min-width: 24px; /* Prevent squashing */
-    min-height: 24px;
-    border-radius: 50%;
+    text-align: center;
+    padding: 0.5rem 0.25rem;
+    transition: transform 0.1s, box-shadow 0.2s;
     border: 2px solid transparent;
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-color: currentColor; /* Fallback */
 }
 
-.color-swatch input:checked + .swatch-circle {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px var(--color-surface-elevated), 0 0 0 4px var(--color-primary);
+/* Selected State */
+.badge-option input:checked + .category-badge {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* Add a ring effect using existing border or shadow? 
+       Let's use a border color change or shadow ring */
+    box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
+    z-index: 1;
 }
 
-/* Map background colors for swatches */
-.bg-blue   { background-color: #3b82f6; }
-.bg-green  { background-color: #10b981; }
-.bg-purple { background-color: #a855f7; }
-.bg-orange { background-color: #f97316; }
-.bg-red    { background-color: #ef4444; }
-.bg-teal   { background-color: #14b8a6; }
-.bg-yellow { background-color: #eab308; }
-.bg-pink   { background-color: #f472b6; }
-.bg-indigo { background-color: #6366f1; }
-.bg-gray   { background-color: #64748b; }
+/* Hover State */
+.badge-option:hover .category-badge {
+    transform: translateY(-1px);
+}
+
+/* Combo Box */
+.combo-box-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.combo-box-wrapper input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.combo-toggle {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-left: none;
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    padding: 0 0.75rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    transition: background 0.1s;
+}
+
+.combo-toggle:hover {
+    background: var(--color-bg);
+    color: var(--color-text-main);
+}
+
+.custom-options-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.option-item:hover {
+    background: var(--color-bg);
+}
+
+.option-empty {
+    padding: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Badge Dropdown Trigger */
+.badge-trigger {
+    width: 100%;
+    height: 42px; /* Match Input Height approximately */
+    display: flex; /* Override badge inline-block */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Ensure no double padding/borders from dropdown-selected base class */
+.dropdown-selected.badge-trigger {
+    border: 1px solid transparent; /* The badge color handles visuals */
+    padding: 0.25rem 0.5rem;
+}
+
+.badge-trigger:hover {
+    filter: brightness(0.95);
+}

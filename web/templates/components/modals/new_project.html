@@ -4,6 +4,7 @@
             <h3>New Project</h3>
             <button class="btn-icon" onclick="this.closest('.modal-backdrop').remove()">×</button>
         </div>
+        
         <form hx-post="/project/new" 
               hx-target="#col-active" 
               hx-swap="beforeend"
@@ -19,30 +20,46 @@
                 <textarea name="description" rows="3" placeholder="Brief details..."></textarea>
             </div>
 
-            <div class="category-section">
-                <div class="form-group">
-                    <label>Category Name</label>
-                    <input type="text" 
-                           name="category_name" 
-                           list="category-suggestions" 
-                           required 
-                           placeholder="Type or select category..."
-                           id="cat-name-input">
-                    <datalist id="category-suggestions">
-                        {% for cat in categories %}
-                            <option value="{{ cat.name }}" data-color="{{ cat.color }}"></option>
-                        {% endfor %}
-                    </datalist>
-                </div>
+            <!-- Category Section -->
+            <div class="category-section-styled vertical">
                 
-                <div class="form-group">
-                    <label>Category Color</label>
-                    <div class="color-picker">
-                        {% set colors = ['blue', 'green', 'purple', 'orange', 'red', 'teal', 'yellow', 'pink', 'indigo', 'gray'] %}
+                <!-- 1. Name Input (Full Width) -->
+                <div class="form-group full-width">
+                    <label>Category Name</label>
+                    <div class="combo-box-wrapper">
+                        <input type="text" 
+                               name="category_name" 
+                               required 
+                               maxlength="10"
+                               placeholder="Type or select..."
+                               id="cat-name-input"
+                               autocomplete="off">
+                        <button type="button" class="combo-toggle" onclick="toggleCategoryList()">▼</button>
+                        
+                        <!-- Suggestions -->
+                        <div class="custom-options-list" id="category-list">
+                            {% for cat in categories %}
+                                <div class="option-item" onclick="selectCategory('{{ cat.name }}', '{{ cat.color }}')">
+                                    <span class="swatch-circle bg-{{ cat.color }} sm"></span>
+                                    <span>{{ cat.name }}</span>
+                                </div>
+                            {% else %}
+                                <div class="option-empty">No previous categories</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Color Grid (2x4) -->
+                <div class="form-group full-width">
+                    <label>Select Appearance</label>
+                    <div class="color-grid">
+                        {% set colors = ['blue', 'green', 'purple', 'orange', 'red', 'teal', 'yellow', 'pink'] %}
                         {% for color in colors %}
-                            <label class="color-swatch">
+                            <label class="badge-option">
                                 <input type="radio" name="category_color" value="{{ color }}" {% if loop.first %}checked{% endif %}>
-                                <span class="swatch-circle bg-{{ color }}"></span>
+                                <span class="category-badge cat-{{ color }} dynamic-badge">Category</span>
+                                <div class="selection-ring"></div>
                             </label>
                         {% endfor %}
                     </div>
@@ -55,18 +72,74 @@
             </div>
         </form>
     </div>
+
     <script>
-        // Auto-select color when existing category is chosen
-        document.getElementById('cat-name-input').addEventListener('input', function(e) {
+        // --- State ---
+        const nameInput = document.getElementById('cat-name-input');
+        const categoryList = document.getElementById('category-list');
+        const dynamicBadges = document.querySelectorAll('.dynamic-badge');
+
+        // --- Logic ---
+
+        // 1. Update All Badges Text
+        function updateBadges(text) {
+            const display = text || 'Category';
+            dynamicBadges.forEach(badge => {
+                badge.textContent = display;
+            });
+        }
+
+        nameInput.addEventListener('input', (e) => {
             const val = e.target.value;
-            const options = document.getElementById('category-suggestions').options;
-            for (let i = 0; i < options.length; i++) {
-                if (options[i].value === val) {
-                    const color = options[i].getAttribute('data-color');
-                    const radio = document.querySelector(`input[name="category_color"][value="${color}"]`);
-                    if (radio) radio.checked = true;
-                    break;
+            updateBadges(val);
+            
+            // Filter List
+            const items = categoryList.querySelectorAll('.option-item');
+            let hasMatch = false;
+            items.forEach(item => {
+                const text = item.querySelector('span:last-child').textContent.toLowerCase();
+                if (text.includes(val.toLowerCase())) {
+                    item.style.display = 'flex';
+                    hasMatch = true;
+                } else {
+                    item.style.display = 'none';
                 }
+            });
+            
+            if (val && !hasMatch) categoryList.style.display = 'none';
+            // Show list if empty to allow browsing
+             else if (val === '') categoryList.style.display = 'block';
+        });
+
+        // Toggle List
+        nameInput.addEventListener('click', () => {
+             if (nameInput.value === '') toggleCategoryList();
+        });
+
+        function toggleCategoryList() {
+            const isVisible = categoryList.style.display === 'block';
+            categoryList.style.display = isVisible ? 'none' : 'block';
+             // Reset filters
+            const items = categoryList.querySelectorAll('.option-item');
+            items.forEach(i => i.style.display = 'flex');
+        }
+
+        // 2. Select Existing Category
+        function selectCategory(name, color) {
+            nameInput.value = name;
+            updateBadges(name);
+            
+            // Select the radio button
+            const radio = document.querySelector(`input[name="category_color"][value="${color}"]`);
+            if (radio) radio.checked = true;
+
+            categoryList.style.display = 'none';
+        }
+
+        // 3. Click Outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.combo-box-wrapper')) {
+                categoryList.style.display = 'none';
             }
         });
     </script>

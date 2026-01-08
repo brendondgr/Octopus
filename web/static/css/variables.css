@@ -42,6 +42,12 @@
     --cat-orange-bg: #ffedd5; --cat-orange-border: #f97316; --cat-orange-text: #7c2d12;
     /* Red */
     --cat-red-bg: #fee2e2; --cat-red-border: #ef4444; --cat-red-text: #7f1d1d;
+    /* Teal */
+    --cat-teal-bg: #ccfbf1; --cat-teal-border: #14b8a6; --cat-teal-text: #134e4a;
+    /* Yellow */
+    --cat-yellow-bg: #fef9c3; --cat-yellow-border: #eab308; --cat-yellow-text: #713f12;
+    /* Pink */
+    --cat-pink-bg: #fce7f3; --cat-pink-border: #f472b6; --cat-pink-text: #831843;
     
     /* Animation */
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
