@@ -18,14 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const percentSpan = document.getElementById(`modal-progress-percent-${projectId}`);
         if (percentSpan) percentSpan.textContent = progress + '%';
         
-        // 3. Update Progress Bars (Animated)
-        const bars = [
-            document.querySelector(`#modal-progress-${projectId} .progress-bar`),
-            document.querySelector(`#progress-${projectId} .progress-bar`)
+        // 3. Update Progress Bars & Text Overlays (Animated)
+        const containers = [
+            document.getElementById(`modal-progress-${projectId}`),
+            document.getElementById(`progress-${projectId}`)
         ];
         
-        bars.forEach(bar => {
-            if (bar) bar.style.width = progress + '%';
+        containers.forEach(container => {
+            if (container) {
+                const bar = container.querySelector('.progress-bar');
+                const overlay = container.querySelector('.progress-text-overlay');
+                if (bar) bar.style.width = progress + '%';
+                if (overlay) overlay.textContent = progress + '%';
+            }
         });
     });
 });

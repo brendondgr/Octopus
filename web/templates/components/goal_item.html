@@ -14,8 +14,16 @@
         {% endif %}
     </button>
     
-    <!-- Goal Title -->
-    <span class="goal-title">{{ goal.title }}</span>
+    <!-- Goal Title & Meta -->
+    <div class="goal-title-wrapper">
+        <span class="goal-title">{{ goal.title }}</span>
+        <div class="goal-meta">
+            <span title="Created">Added {{ goal.date_created.strftime('%y-%m-%d') }}</span>
+            {% if goal.status == 'Completed' and goal.date_completed %}
+                <span title="Completed">Completed {{ goal.date_completed.strftime('%y-%m-%d') }}</span>
+            {% endif %}
+        </div>
+    </div>
     
     <!-- Delete Button -->
     <button class="goal-delete"

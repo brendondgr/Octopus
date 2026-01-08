@@ -56,7 +56,8 @@ Octopus/
     - `id`: Unique Identifier
     - `title`: String
     - `description`: String
-    - `status`: Enum (Active, Completed, On-Hold, Abandoned) - _Derived from Goals or set manually? (To be defined in logic)_
+    - `status`: Enum (Active, Completed, On-Hold, Abandoned) - Set manually via drag-and-drop.
+    - `progress`: Integer (0-100) - Calculated dynamically from goal completion.
     - `date_created`: Timestamp
     - `deadline`: Timestamp (Optional)
     - `order_index`: Integer (For drag-and-drop positioning)
@@ -65,13 +66,16 @@ Octopus/
     - `id`: Unique Identifier
     - `project_id`: Foreign Key
     - `title`: String
-    - `status`: Enum (Pending, Completed, On-Hold, Abandoned)
+    - `status`: Enum (Pending, Completed)
     - `date_created`: Timestamp
     - `date_completed`: Timestamp (For duration calculation)
     - `deadline`: Timestamp (Optional)
 
 ### Core Logic
 
+- **Progress Calculation**: Python logic in `Project.calculate_progress()` determines completion percentage based on child Goals.
+- **Themed Aesthetics**: Progress bars and UI elements dynamically match category colors (using background, border, and text variables from `@docs/ui.md`).
+- **Descriptive Timestamps**: Logic translates raw timestamps into readable formats like "Added on...", "Held since...", etc., depending on the project's current status.
 - **Duration Calculation**: Python logic to calculate "Days to Complete" based on `date_created` vs `date_completed`.
 - **Timeline Visualization**: Calculate weekly breakdowns of completed tasks for the visualization chart.
 
@@ -83,7 +87,8 @@ Octopus/
 - **Status Dashboard**: The interface is divided into **4 separate areas** (Active, Completed, On-Hold, Abandoned).
   - **Visual Clarity**: Each column features a unique, distinct background color and border accent to prevent categorization confusion.
 - **HTMX Integration**:
-  - Clicking a "Checkmark" sends a POST request to update status and swaps the specific Goal HTML element (Planned).
-  - Dragging a card will eventually send a PATCH request to update its status/order in the database.
-  - Modals fetch dynamic content via GET requests (Planned).
+  - Clicking a "Checkmark" sends a POST request to toggle status and returns the updated Goal HTML with an `HX-Trigger` to update project progress.
+  - Adding/Deleting goals also triggers real-time progress bar animations via custom events.
+  - Dragging a card sends a PATCH request to update its status/order in the database.
+  - Modals fetch dynamic content via GET requests (e.g., `/project/<id>/details`).
 - **Design System**: Strict adherence to `@docs/ui.md`.

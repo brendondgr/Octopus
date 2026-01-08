@@ -1,6 +1,6 @@
 <div class="project-card" data-id="{{ project.id }}" data-status="{{ project.status }}">
     <div class="drag-handle">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="5" x2="5" y2="19"></line><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="5" x2="5" y2="19"></line><line x1="19" y1="5" x2="19" y2="19"></line></svg>
     </div>
     <div class="card-body"
          hx-get="/project/{{ project.id }}/details"
@@ -8,11 +8,25 @@
          hx-swap="innerHTML">
         <div class="card-header">
             <span class="category-badge cat-{{ project.category.color|lower }}">{{ project.category.name }}</span>
+            <div class="status-date">
+                <span class="date-pill added" title="Added">Added {{ project.date_created.strftime('%y-%m-%d') }}</span>
+                {% if project.status == 'Completed' and project.date_completed %}
+                    <span class="date-pill done" title="Completed">Completed {{ project.date_completed.strftime('%y-%m-%d') }}</span>
+                {% elif project.status == 'On-Hold' and project.date_on_hold %}
+                    <span class="date-pill held" title="On-Hold">On-Hold {{ project.date_on_hold.strftime('%y-%m-%d') }}</span>
+                {% elif project.status == 'Abandoned' and project.date_abandoned %}
+                    <span class="date-pill dropped" title="Abandoned">Abandoned {{ project.date_abandoned.strftime('%y-%m-%d') }}</span>
+                {% endif %}
+            </div>
         </div>
         <h3 class="card-title">{{ project.title }}</h3>
         <p class="card-desc">{{ project.description }}</p>
-        <div class="progress-container" id="progress-{{ project.id }}">
-            <div class="progress-bar" style="width: {{ project.calculate_progress() }}%"></div>
+        
+        <div class="card-footer">
+            <div class="progress-container cat-{{ project.category.color|lower }}" id="progress-{{ project.id }}" style="flex: 1;">
+                <div class="progress-bar cat-{{ project.category.color|lower }}" style="width: {{ project.calculate_progress() }}%"></div>
+                <span class="progress-text-overlay">{{ project.calculate_progress() }}%</span>
+            </div>
         </div>
     </div>
 </div>

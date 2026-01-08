@@ -27,6 +27,9 @@ class Project(db.Model):
     progress = db.Column(db.Integer, default=0)
     order_index = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_completed = db.Column(db.DateTime, nullable=True)
+    date_on_hold = db.Column(db.DateTime, nullable=True)
+    date_abandoned = db.Column(db.DateTime, nullable=True)
     deadline = db.Column(db.DateTime, nullable=True)
 
     # Relationship to Goals
@@ -48,7 +51,10 @@ class Project(db.Model):
             'category': self.category.to_dict() if self.category else None,
             'progress': self.calculate_progress(),
             'order_index': self.order_index,
-            'date_created': self.date_created.isoformat() if self.date_created else None,
+            'date_created': self.date_created.strftime('%y-%m-%d') if self.date_created else None,
+            'date_completed': self.date_completed.strftime('%y-%m-%d') if self.date_completed else None,
+            'date_on_hold': self.date_on_hold.strftime('%y-%m-%d') if self.date_on_hold else None,
+            'date_abandoned': self.date_abandoned.strftime('%y-%m-%d') if self.date_abandoned else None,
             'deadline': self.deadline.isoformat() if self.deadline else None
         }
 

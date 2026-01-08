@@ -64,7 +64,17 @@ def update_project(project_id):
     
     # Update Status
     if 'status' in request.form:
-        project.status = request.form['status']
+        new_status = request.form['status']
+        project.status = new_status
+        
+        # Update corresponding timestamp
+        now = datetime.utcnow()
+        if new_status == 'Completed':
+            project.date_completed = now
+        elif new_status == 'On-Hold':
+            project.date_on_hold = now
+        elif new_status == 'Abandoned':
+            project.date_abandoned = now
         
     db.session.commit()
     return jsonify({'success': True})
@@ -169,4 +179,8 @@ def project_progress(project_id):
     """Return updated progress bar for a project"""
     project = Project.query.get_or_404(project_id)
     progress = project.calculate_progress()
-    return f'<div class="progress-bar" style="width: {progress}%"></div>'
+    color = project.category.color.lower()
+    return f'''
+        <div class="progress-bar cat-{color}" style="width: {progress}%"></div>
+        <span class="progress-text-overlay">{progress}%</span>
+    '''

@@ -10,10 +10,21 @@
 <script hx-swap-oob="true">
 (function() {
     const progress = {{ project.calculate_progress() }};
-    const modalBar = document.querySelector('#modal-progress-{{ project.id }} .progress-bar');
-    const cardBar = document.querySelector('#progress-{{ project.id }} .progress-bar');
+    const modalContainer = document.querySelector('#modal-progress-{{ project.id }}');
+    const cardContainer = document.querySelector('#progress-{{ project.id }}');
     
-    if (modalBar) modalBar.style.width = progress + '%';
-    if (cardBar) cardBar.style.width = progress + '%';
+    if (modalContainer) {
+        const modalBar = modalContainer.querySelector('.progress-bar');
+        if (modalBar) modalBar.style.width = progress + '%';
+        const modalText = modalContainer.querySelector('.progress-text-overlay');
+        if (modalText) modalText.textContent = progress + '%';
+    }
+    
+    if (cardContainer) {
+        const cardBar = cardContainer.querySelector('.progress-bar');
+        if (cardBar) cardBar.style.width = progress + '%';
+        const cardText = cardContainer.querySelector('.progress-text-overlay');
+        if (cardText) cardText.textContent = progress + '%';
+    }
 })();
 </script>
