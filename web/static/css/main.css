@@ -131,6 +131,23 @@ h6 {
     transition: opacity 0.2s;
 }
 
+.edit-action {
+    position: absolute;
+    top: 0.75rem;
+    right: 2.5rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: 0.25rem;
+    opacity: 0.5;
+    transition: opacity 0.2s, color 0.2s, transform 0.2s;
+}
+
+.edit-action:hover {
+    opacity: 1;
+    color: var(--color-primary);
+    transform: scale(1.1);
+}
+
 .drag-handle:hover {
     opacity: 1;
 }
@@ -251,6 +268,7 @@ h6 {
     margin-bottom: 1.25rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;
@@ -1844,6 +1862,113 @@ header {
 .goal-meta .deadline-overdue {
     color: var(--cat-red-text);
     font-weight: 600;
+}
+
+/* Goal Actions & Editing */
+.goal-actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.goal-item:hover .goal-actions {
+    opacity: 1;
+}
+
+.goal-action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--color-text-muted);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.goal-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text-main);
+}
+
+.goal-action-btn.delete:hover {
+    color: var(--cat-red-text);
+    background: var(--cat-red-bg);
+}
+
+.goal-action-btn.edit:hover {
+    color: var(--color-primary);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* Inline Editing */
+.goal-item.editing {
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.goal-edit-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.edit-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.edit-input-title {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    background: transparent;
+}
+
+.edit-input-title:focus {
+    outline: none;
+    border-bottom-color: var(--color-primary);
+}
+
+.edit-input-date {
+    width: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.check-save {
+    color: var(--cat-green-text);
+}
+
+.check-save:hover {
+    background: var(--cat-green-bg);
+}
+
+.check-cancel {
+    color: var(--cat-red-text);
+}
+
+.check-cancel:hover {
+    background: var(--cat-red-bg);
 }
 
 /* =========================

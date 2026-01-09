@@ -81,6 +81,9 @@ Octopus/
 - **Themed Aesthetics**: Progress bars and UI elements dynamically match category colors (using background, border, and text variables from `@docs/ui.md`).
 - **Descriptive Timestamps**: Logic translates raw timestamps into readable formats like "Added on...", "Held since...", etc., depending on the project's current status.
 - **Duration Calculation**: Python logic to calculate "Days to Complete" based on `date_created` vs `date_completed`. JavaScript scaling logic provides human-readable durations (Hours, Days, Months, Years).
+- **Edit & Delete Capabilities**:
+    - **Projects**: Comprehensive editing via modals (Title, Description, Category, Deadline) and deletion with safety confirmations.
+    - **Goals**: Inline editing for rapid updates and cancellation support.
 - **Gantt Timeline Visualization**: 
   - **Hierarchical Layout**: Displays projects and their nested goals in a chronological Gantt-style chart.
   - **Interactive Toggles**: Projects can be collapsed/expanded to hide/show their respective goals.
@@ -97,11 +100,14 @@ Octopus/
 - **Drag-and-Drop**: Implemented via a custom **Pointer Events** system (rather than the native HTML5 API) to ensure "zero-ghosting" and maximum smoothness.
   - **Grip Handle**: Interactions are restricted to a specific `|||` drag-handle on each card to prevent accidental moves.
   - **Physics**: Uses CSS transitions and absolute positioning for high-fidelity "lifting" and "snapping" effects.
+  - **Live Counters**: Column headers feature real-time counters (e.g., "Active (3)") that update instantly as cards are moved between areas.
 - **Status Dashboard**: The interface is divided into **4 separate areas** (Active, Completed, On-Hold, Abandoned).
   - **Visual Clarity**: Each column features a unique, distinct background color and border accent to prevent categorization confusion.
 - **HTMX Integration**:
   - Clicking a "Checkmark" sends a POST request to toggle status and returns the updated Goal HTML with an `HX-Trigger` to update project progress.
   - Adding/Deleting goals also triggers real-time progress bar animations via custom events.
   - Dragging a card sends a PATCH request to update its status/order in the database.
-  - Modals fetch dynamic content via GET requests (e.g., `/project/<id>/details`).
+  - Modals fetch dynamic content via GET requests (e.g., `/project/<id>/details`, `/project/<id>/edit`).
+  - Inline forms enable seamless goal editing without modal fatigue.
 - **Design System**: Strict adherence to `@docs/ui.md`.
+

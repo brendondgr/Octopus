@@ -25,6 +25,9 @@ function initDragAndDrop() {
         dragHandle = handle; // Store for capture release
         cardRect = activeCard.getBoundingClientRect();
 
+        // Add moving class to body to suppress hover effects if needed
+        document.body.classList.add('is-moving-card');
+
         // 2. Calculate Offsets
         initialX = e.clientX - cardRect.left;
         initialY = e.clientY - cardRect.top;
@@ -203,10 +206,30 @@ function initDragAndDrop() {
             if (isCleaned) return;
             isCleaned = true;
             performCleanup();
+            updateColumnCounts(); // Update counts after operation
+            document.body.classList.remove('is-moving-card');
         };
 
         activeCard.addEventListener('transitionend', safeCleanup, { once: true });
         // Fallback if transition fails or is interrupted
         setTimeout(safeCleanup, 250);
     }
+
+    function updateColumnCounts() {
+        const columns = document.querySelectorAll('.status-column');
+        columns.forEach(col => {
+            // Count cards that are not placeholders and not dragging
+            const cards = col.querySelectorAll('.project-card:not(.is-dragging)');
+            const countBadge = col.querySelector('.column-header .badge-count');
+            if (countBadge) {
+                countBadge.textContent = cards.length;
+            }
+        });
+    }
+
+    // Listen for external updates (like deletion)
+    document.body.addEventListener('project-updated', updateColumnCounts);
+
+    // Run once on init to be safe
+    updateColumnCounts();
 }

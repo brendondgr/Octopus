@@ -1,0 +1,25 @@
+<div class="goal-item editing" id="goal-{{ goal.id }}">
+    <form hx-post="/goal/{{ goal.id }}/edit" 
+          hx-target="#goal-{{ goal.id }}" 
+          hx-swap="outerHTML"
+          class="goal-edit-form">
+        
+        <div class="edit-inputs">
+            <input type="text" name="title" value="{{ goal.title }}" required class="edit-input-title" autofocus>
+            <input type="datetime-local" name="deadline" value="{{ goal.deadline if goal.deadline else '' }}" class="edit-input-date">
+        </div>
+
+        <div class="edit-actions">
+            <button type="button" 
+                    hx-get="/goal/{{ goal.id }}/cancel" 
+                    hx-target="#goal-{{ goal.id }}" 
+                    hx-swap="outerHTML"
+                    class="btn-icon check-cancel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <button type="submit" class="btn-icon check-save">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+        </div>
+    </form>
+</div>

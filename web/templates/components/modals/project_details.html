@@ -64,7 +64,7 @@
             
             <!-- Goals List -->
             <div class="goals-list" id="goals-list-{{ project.id }}">
-                {% for goal in project.goals %}
+                {% for goal in goals %}
                     {% include 'components/goal_item.html' %}
                 {% else %}
                     <div class="goals-empty" id="goals-empty-{{ project.id }}">

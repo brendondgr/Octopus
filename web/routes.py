@@ -68,6 +68,53 @@ def create_project():
     # Return the encoded card to be appended to the Active column
     return render_template('components/project_card.html', project=new_project)
 
+@bp.route('/project/<int:project_id>/edit', methods=['GET'])
+def edit_project_modal(project_id):
+    project = Project.query.get_or_404(project_id)
+    categories = Category.query.all()
+    return render_template('components/modals/edit_project.html', project=project, categories=categories)
+
+@bp.route('/project/<int:project_id>/edit', methods=['POST'])
+def edit_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    data = request.form
+    
+    # Category Logic (same as create)
+    cat_name = data.get('category_name')
+    cat_color = data.get('category_color', 'blue')
+    
+    category = Category.query.filter_by(name=cat_name).first()
+    
+    if category:
+        if category.color != cat_color:
+            category.color = cat_color
+    else:
+        category = Category(name=cat_name, color=cat_color)
+        db.session.add(category)
+        db.session.flush()
+        
+    # Update Project Fields
+    project.title = data.get('title')
+    project.description = data.get('description')
+    project.category = category
+    
+    # Parse optional deadline
+    deadline_str = data.get('deadline')
+    if deadline_str:
+        try:
+            project.deadline = datetime.fromisoformat(deadline_str)
+        except ValueError:
+            pass
+    else:
+        project.deadline = None
+        
+    db.session.commit()
+    
+    # Return updated card and trigger timeline update
+    response = make_response(render_template('components/project_card.html', project=project))
+    response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}})
+    return response
+
 @bp.route('/project/<int:project_id>', methods=['PATCH'])
 def update_project(project_id):
     project = Project.query.get_or_404(project_id)
@@ -98,6 +145,16 @@ def update_project(project_id):
     response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}})
     return response
 
+@bp.route('/project/<int:project_id>', methods=['DELETE'])
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    
+    response = make_response('')
+    response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}, "project-updated": {}})
+    return response
+
 
 # =====================
 # Project Details Modal
@@ -105,7 +162,11 @@ def update_project(project_id):
 @bp.route('/project/<int:project_id>/details', methods=['GET'])
 def project_details(project_id):
     project = Project.query.get_or_404(project_id)
-    return render_template('components/modals/project_details.html', project=project)
+    # Sort goals: Pending first, then Completed
+    # Python's sort is stable, and False < True. 
+    # status == 'Completed' will be True (1) for completed and False (0) for pending.
+    sorted_goals = sorted(project.goals, key=lambda g: g.status == 'Completed')
+    return render_template('components/modals/project_details.html', project=project, goals=sorted_goals)
 
 
 # ================
@@ -204,6 +265,48 @@ def delete_goal(goal_id):
     response = make_response('')
     response.headers['HX-Trigger'] = json.dumps(trigger_data)
     return response
+
+@bp.route('/goal/<int:goal_id>/edit', methods=['GET'])
+def edit_goal_form(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    return render_template('components/goal_edit_form.html', goal=goal)
+
+@bp.route('/goal/<int:goal_id>/edit', methods=['POST'])
+def edit_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    project = goal.project
+    
+    title = request.form.get('title', '').strip()
+    if not title:
+        # Simple validation: if empty, reload form with existing data (or could return error)
+        return render_template('components/goal_edit_form.html', goal=goal)
+        
+    goal.title = title
+    
+    deadline_str = request.form.get('deadline')
+    if deadline_str:
+        try:
+            goal.deadline = datetime.fromisoformat(deadline_str)
+        except ValueError:
+            pass
+    else:
+        goal.deadline = None
+        
+    db.session.commit()
+    
+    # Prepare progress trigger (timeline needs update too)
+    trigger_data = {
+        "timeline-updated": {}
+    }
+    
+    response = make_response(render_template('components/goal_item.html', goal=goal))
+    response.headers['HX-Trigger'] = json.dumps(trigger_data)
+    return response
+
+@bp.route('/goal/<int:goal_id>/cancel', methods=['GET'])
+def cancel_edit_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    return render_template('components/goal_item.html', goal=goal)
 
 
 @bp.route('/project/<int:project_id>/progress', methods=['GET'])

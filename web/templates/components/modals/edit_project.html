@@ -1,0 +1,166 @@
+<div class="modal-backdrop" onclick="this.remove()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Edit Project</h3>
+            <button class="btn-icon" onclick="this.closest('.modal-backdrop').remove()">×</button>
+        </div>
+        
+        <form hx-post="/project/{{ project.id }}/edit" 
+              hx-target="[data-id='{{ project.id }}']" 
+              hx-swap="outerHTML"
+              hx-on::after-request="this.closest('.modal-backdrop').remove()">
+            
+            <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" name="title" value="{{ project.title }}" required placeholder="e.g. Website Redesign" autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Brief details...">{{ project.description or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Deadline (Optional)</label>
+                <input type="datetime-local" name="deadline" value="{{ project.deadline if project.deadline else '' }}">
+            </div>
+
+            <!-- Category Section -->
+            <div class="category-section-styled vertical">
+                
+                <!-- 1. Name Input (Full Width) -->
+                <div class="form-group full-width">
+                    <label>Category Name</label>
+                    <div class="combo-box-wrapper">
+                        <input type="text" 
+                               name="category_name" 
+                               value="{{ project.category.name }}"
+                               required 
+                               maxlength="10"
+                               placeholder="Type or select..."
+                               id="cat-name-input"
+                               autocomplete="off">
+                        <button type="button" class="combo-toggle" onclick="toggleCategoryList()">▼</button>
+                        
+                        <!-- Suggestions -->
+                        <div class="custom-options-list" id="category-list">
+                            {% for cat in categories %}
+                                <div class="option-item" onclick="selectCategory('{{ cat.name }}', '{{ cat.color }}')">
+                                    <span class="swatch-circle bg-{{ cat.color }} sm"></span>
+                                    <span>{{ cat.name }}</span>
+                                </div>
+                            {% else %}
+                                <div class="option-empty">No previous categories</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Color Grid (2x4) -->
+                <div class="form-group full-width">
+                    <label>Select Appearance</label>
+                    <div class="color-grid">
+                        {% set colors = ['blue', 'green', 'purple', 'orange', 'red', 'teal', 'yellow', 'pink'] %}
+                        {% for color in colors %}
+                            <label class="badge-option">
+                                <input type="radio" name="category_color" value="{{ color }}" {% if project.category.color == color %}checked{% endif %}>
+                                <span class="category-badge cat-{{ color }} dynamic-badge">{{ project.category.name }}</span>
+                                <div class="selection-ring"></div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button type="button" 
+                        class="btn-secondary" 
+                        style="color: var(--cat-red-text); border-color: var(--cat-red-border);"
+                        hx-delete="/project/{{ project.id }}"
+                        hx-confirm="Are you sure you want to delete this project?"
+                        hx-target="[data-id='{{ project.id }}']" 
+                        hx-swap="delete"
+                        hx-on::after-request="this.closest('.modal-backdrop').remove()">
+                    Delete Project
+                </button>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn-secondary" onclick="this.closest('.modal-backdrop').remove()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // --- State ---
+        {
+            const nameInput = document.getElementById('cat-name-input');
+            const categoryList = document.getElementById('category-list');
+            const dynamicBadges = document.querySelectorAll('.dynamic-badge');
+
+            // --- Logic ---
+
+            // 1. Update All Badges Text
+            function updateBadges(text) {
+                const display = text || 'Category';
+                dynamicBadges.forEach(badge => {
+                    badge.textContent = display;
+                });
+            }
+
+            nameInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                updateBadges(val);
+                
+                // Filter List
+                const items = categoryList.querySelectorAll('.option-item');
+                let hasMatch = false;
+                items.forEach(item => {
+                    const text = item.querySelector('span:last-child').textContent.toLowerCase();
+                    if (text.includes(val.toLowerCase())) {
+                        item.style.display = 'flex';
+                        hasMatch = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                if (val && !hasMatch) categoryList.style.display = 'none';
+                // Show list if empty to allow browsing
+                 else if (val === '') categoryList.style.display = 'block';
+            });
+
+            // Toggle List
+            nameInput.addEventListener('click', () => {
+                 if (nameInput.value === '') toggleCategoryList();
+            });
+
+            window.toggleCategoryList = function() {
+                const isVisible = categoryList.style.display === 'block';
+                categoryList.style.display = isVisible ? 'none' : 'block';
+                 // Reset filters
+                const items = categoryList.querySelectorAll('.option-item');
+                items.forEach(i => i.style.display = 'flex');
+            }
+
+            // 2. Select Existing Category
+            window.selectCategory = function(name, color) {
+                nameInput.value = name;
+                updateBadges(name);
+                
+                // Select the radio button
+                const radio = document.querySelector(`input[name="category_color"][value="${color}"]`);
+                if (radio) radio.checked = true;
+
+                categoryList.style.display = 'none';
+            }
+
+            // 3. Click Outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.combo-box-wrapper')) {
+                    categoryList.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</div>
