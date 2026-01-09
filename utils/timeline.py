@@ -1,8 +1,31 @@
-"""
-Timeline utilities for Gantt chart data preparation.
-"""
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Tuple, Optional
+
+
+def parse_date(date_val: Optional[str]) -> Optional[datetime]:
+    """
+    Parse a date string (ISO format) and return a naive UTC datetime.
+    Ensures compatibility with database-stored naive datetimes.
+    """
+    if not date_val:
+        return None
+    try:
+        # If date has 'Z' suffix, treat as explicit UTC
+        if date_val.endswith('Z'):
+            dt = datetime.fromisoformat(date_val.replace('Z', '+00:00'))
+            return dt.astimezone(timezone.utc).replace(tzinfo=None)
+        
+        # Parse the date
+        dt = datetime.fromisoformat(date_val)
+        
+        # If it has timezone info, convert to naive UTC
+        if dt.tzinfo is not None:
+            return dt.astimezone(timezone.utc).replace(tzinfo=None)
+        
+        # If already naive, assume it's already in UTC (database format)
+        return dt
+    except (ValueError, TypeError):
+        return None
 
 
 def get_timeline_items_for_dashboard(projects: List) -> List[Dict]:
@@ -38,12 +61,15 @@ def get_timeline_items_for_project(project) -> List[Dict]:
     return items
 
 
-def calculate_date_range(items: List[Dict], padding_days: int = 7) -> Tuple[datetime, datetime]:
+def calculate_date_range(items: List[Dict], padding_days: int = 7, explicit_range: Optional[Tuple[datetime, datetime]] = None) -> Tuple[datetime, datetime]:
     """
-    Determine min/max dates for timeline view with padding for visual spacing.
-    
-    Returns (min_date, max_date) tuple.
+    Determine min/max dates for timeline view.
+    If explicit_range is provided (min, max), it uses those as the bounds.
+    Otherwise, it calculates from items with padding.
     """
+    if explicit_range:
+        return explicit_range
+        
     if not items:
         now = datetime.utcnow()
         return (now - timedelta(days=30), now + timedelta(days=30))
@@ -52,14 +78,8 @@ def calculate_date_range(items: List[Dict], padding_days: int = 7) -> Tuple[date
     max_date = None
     
     for item in items:
-        start = item.get('start_date')
-        end = item.get('end_date')
-        
-        # Parse string dates if necessary
-        if isinstance(start, str):
-            start = datetime.fromisoformat(start.replace('Z', '+00:00'))
-        if isinstance(end, str):
-            end = datetime.fromisoformat(end.replace('Z', '+00:00'))
+        start = parse_date(item.get('start_date')) if isinstance(item.get('start_date'), str) else item.get('start_date')
+        end = parse_date(item.get('end_date')) if isinstance(item.get('end_date'), str) else item.get('end_date')
         
         if start:
             if min_date is None or start < min_date:
@@ -79,7 +99,7 @@ def calculate_date_range(items: List[Dict], padding_days: int = 7) -> Tuple[date
     if max_date is None:
         max_date = now
     
-    # Add padding
+    # Add padding only if we didn't have an explicit range
     min_date = min_date - timedelta(days=padding_days)
     max_date = max_date + timedelta(days=padding_days)
     
@@ -128,7 +148,10 @@ def filter_timeline_items(
             if end is None:
                 return True
             if isinstance(end, str):
-                end = datetime.fromisoformat(end.replace('Z', '+00:00'))
+                end = parse_date(end)
+            # If end is a datetime, ensure it's naive for comparison
+            if isinstance(end, datetime) and end.tzinfo is not None:
+                end = end.astimezone(timezone.utc).replace(tzinfo=None)
             return end >= date_start
         filtered = [i for i in filtered if ends_after(i)]
     
@@ -139,7 +162,10 @@ def filter_timeline_items(
             if start is None:
                 return True
             if isinstance(start, str):
-                start = datetime.fromisoformat(start.replace('Z', '+00:00'))
+                start = parse_date(start)
+            # If start is a datetime, ensure it's naive for comparison
+            if isinstance(start, datetime) and start.tzinfo is not None:
+                start = start.astimezone(timezone.utc).replace(tzinfo=None)
             return start <= date_end
         filtered = [i for i in filtered if starts_before(i)]
     

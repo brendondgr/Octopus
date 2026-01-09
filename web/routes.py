@@ -329,7 +329,8 @@ from utils.timeline import (
     get_timeline_items_for_project,
     calculate_date_range,
     filter_timeline_items,
-    prepare_gantt_data
+    prepare_gantt_data,
+    parse_date
 )
 
 
@@ -344,24 +345,26 @@ def timeline_dashboard():
     # Apply filters from query params
     status_filter = request.args.get('status')
     type_filter = request.args.get('type')
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
+    date_start = request.args.get('start_date')
+    date_end = request.args.get('end_date')
     
-    if status_filter or type_filter or start_date or end_date:
+    dt_start = parse_date(date_start)
+    dt_end = parse_date(date_end)
+    
+    if status_filter or type_filter or date_start or date_end:
         status_list = status_filter.split(',') if status_filter else None
-        date_start = datetime.fromisoformat(start_date) if start_date else None
-        date_end = datetime.fromisoformat(end_date) if end_date else None
         
         items = filter_timeline_items(
             items,
-            date_start=date_start,
-            date_end=date_end,
+            date_start=dt_start,
+            date_end=dt_end,
             status=status_list,
             item_type=type_filter
         )
     
     # Calculate date range and prepare Gantt data
-    date_range = calculate_date_range(items)
+    explicit_range = (dt_start, dt_end) if (dt_start and dt_end) else None
+    date_range = calculate_date_range(items, explicit_range=explicit_range)
     gantt_data = prepare_gantt_data(items, date_range)
     
     return jsonify(gantt_data)
@@ -380,20 +383,22 @@ def timeline_project(project_id):
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     
+    dt_start = parse_date(start_date)
+    dt_end = parse_date(end_date)
+    
     if status_filter or start_date or end_date:
         status_list = status_filter.split(',') if status_filter else None
-        date_start = datetime.fromisoformat(start_date) if start_date else None
-        date_end = datetime.fromisoformat(end_date) if end_date else None
         
         items = filter_timeline_items(
             items,
-            date_start=date_start,
-            date_end=date_end,
+            date_start=dt_start,
+            date_end=dt_end,
             status=status_list
         )
     
     # Calculate date range and prepare Gantt data
-    date_range = calculate_date_range(items)
+    explicit_range = (dt_start, dt_end) if (dt_start and dt_end) else None
+    date_range = calculate_date_range(items, explicit_range=explicit_range)
     gantt_data = prepare_gantt_data(items, date_range)
     
     return jsonify(gantt_data)
@@ -413,19 +418,20 @@ def timeline_filter():
     end_date = request.args.get('end_date')
     
     status_list = status_filter.split(',') if status_filter else None
-    date_start = datetime.fromisoformat(start_date) if start_date else None
-    date_end = datetime.fromisoformat(end_date) if end_date else None
+    dt_start = parse_date(start_date)
+    dt_end = parse_date(end_date)
     
     items = filter_timeline_items(
         items,
-        date_start=date_start,
-        date_end=date_end,
+        date_start=dt_start,
+        date_end=dt_end,
         status=status_list,
         project_id=project_id,
         item_type=type_filter
     )
     
-    date_range = calculate_date_range(items)
+    explicit_range = (dt_start, dt_end) if (dt_start and dt_end) else None
+    date_range = calculate_date_range(items, explicit_range=explicit_range)
     gantt_data = prepare_gantt_data(items, date_range)
     
     return jsonify(gantt_data)

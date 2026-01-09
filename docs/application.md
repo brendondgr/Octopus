@@ -84,6 +84,7 @@ Octopus/
 - **Edit & Delete Capabilities**:
     - **Projects**: Comprehensive editing via modals (Title, Description, Category, Deadline) and deletion with safety confirmations.
     - **Goals**: Inline editing for rapid updates and cancellation support.
+- **Goal Sorting**: Python logic in the `project_details` route automatically sorts goals by status (Pending first, Completed last) to ensure active tasks are prioritized in the UI.
 - **Gantt Timeline Visualization**: 
   - **Hierarchical Layout**: Displays projects and their nested goals in a chronological Gantt-style chart.
   - **Interactive Toggles**: Projects can be collapsed/expanded to hide/show their respective goals.
@@ -109,5 +110,6 @@ Octopus/
   - Dragging a card sends a PATCH request to update its status/order in the database.
   - Modals fetch dynamic content via GET requests (e.g., `/project/<id>/details`, `/project/<id>/edit`).
   - Inline forms enable seamless goal editing without modal fatigue.
+  - **Auto-Sorting**: Modals always present goals in a prioritized order (Pending -> Completed) for better focus.
 - **Design System**: Strict adherence to `@docs/ui.md`.
 

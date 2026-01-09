@@ -2,11 +2,16 @@
 <div class="gantt-container" id="{{ container_id or 'gantt-timeline' }}" data-project-id="{{ project_id or '' }}">
     <!-- Controls Header -->
     <div class="gantt-controls">
-        <div class="gantt-zoom-controls">
-            <button class="btn-zoom" data-action="zoom-out" title="Zoom Out">−</button>
-            <span class="zoom-level">Week</span>
-            <button class="btn-zoom" data-action="zoom-in" title="Zoom In">+</button>
-            <button class="btn-zoom" data-action="fit" title="Fit to Data">⟲</button>
+        <div class="gantt-time-range">
+            <select class="time-range-select" title="Time Range">
+                <option value="week">Last Week</option>
+                <option value="2weeks">Last 2 Weeks</option>
+                <option value="month">Last Month</option>
+                <option value="6months">Last 6 Months</option>
+                <option value="year">Last Year</option>
+                <option value="2years">Last 2 Years</option>
+                <option value="all" selected>All Time</option>
+            </select>
         </div>
         <div class="gantt-filter-toggle">
             <button class="btn-filter-toggle" data-action="toggle-filter">

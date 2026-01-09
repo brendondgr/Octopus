@@ -16,9 +16,19 @@ class TimelineRenderer {
             ...options
         };
         this.data = null;
-        this.zoomLevels = ['day', 'week', 'month'];
-        this.currentZoomIndex = 1; // Start at 'week'
         this.expandedProjects = new Set(); // Track which projects are expanded
+
+        // Time range presets (in days from today)
+        this.timeRangePresets = {
+            'week': { label: 'Last Week', days: 7 },
+            '2weeks': { label: 'Last 2 Weeks', days: 14 },
+            'month': { label: 'Last Month', days: 30 },
+            '6months': { label: 'Last 6 Months', days: 180 },
+            'year': { label: 'Last Year', days: 365 },
+            '2years': { label: 'Last 2 Years', days: 730 },
+            'all': { label: 'All Time', days: null }
+        };
+        this.currentTimeRange = 'all'; // Default to show all
 
         if (this.container) {
             this.init();
@@ -35,14 +45,13 @@ class TimelineRenderer {
     }
 
     attachEventListeners() {
-        // Zoom controls
-        const zoomButtons = this.container.querySelectorAll('.btn-zoom');
-        zoomButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const action = e.currentTarget.dataset.action;
-                this.handleZoom(action);
+        // Time range dropdown
+        const timeRangeSelect = this.container.querySelector('.time-range-select');
+        if (timeRangeSelect) {
+            timeRangeSelect.addEventListener('change', (e) => {
+                this.handleTimeRangeChange(e.target.value);
             });
-        });
+        }
 
         // Filter toggle
         const filterToggle = this.container.querySelector('.btn-filter-toggle');
@@ -55,6 +64,47 @@ class TimelineRenderer {
         filterCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => this.handleFilterChange());
         });
+    }
+
+    handleTimeRangeChange(rangeKey) {
+        this.currentTimeRange = rangeKey;
+
+        // Update dropdown display
+        const timeRangeSelect = this.container.querySelector('.time-range-select');
+        if (timeRangeSelect) {
+            timeRangeSelect.value = rangeKey;
+        }
+
+        // Reload data with new time range
+        const projectId = this.container?.dataset.projectId;
+        const endpoint = projectId ? `/api/timeline/project/${projectId}` : '/api/timeline/dashboard';
+        this.loadData(this.buildEndpointWithTimeRange(endpoint));
+    }
+
+    buildEndpointWithTimeRange(baseEndpoint) {
+        const preset = this.timeRangePresets[this.currentTimeRange];
+        if (!preset || preset.days === null) {
+            return baseEndpoint; // All time - no date filter
+        }
+
+        const now = new Date();
+
+        // Align end to very end of today
+        const endDate = new Date(now);
+        endDate.setHours(23, 59, 59, 999);
+
+        // Align start to the beginning of the range (e.g., 7 days ago including today is today + 6 previous days)
+        const startDate = new Date(endDate);
+        startDate.setDate(endDate.getDate() - (preset.days - 1));
+        startDate.setHours(0, 0, 0, 0);
+
+        const params = new URLSearchParams();
+        params.append('start_date', startDate.toISOString());
+        params.append('end_date', endDate.toISOString());
+
+        // Handle existing query params in baseEndpoint
+        const separator = baseEndpoint.includes('?') ? '&' : '?';
+        return `${baseEndpoint}${separator}${params.toString()}`;
     }
 
     async loadData(endpoint) {
@@ -83,7 +133,6 @@ class TimelineRenderer {
             return;
         }
 
-        this.updateZoomDisplay();
         this.renderDateAxis();
         this.renderItems();
     }
@@ -96,7 +145,17 @@ class TimelineRenderer {
         // Calculate axis width based on date range
         const dayWidth = this.getDayWidth();
         const totalDays = this.getTotalDays();
-        const axisWidth = totalDays * dayWidth;
+        let axisWidth = totalDays * dayWidth;
+
+        // Ensure full container width: get scroll container width and use the larger value
+        const scrollContainer = this.container.querySelector('.gantt-scroll-container');
+        if (scrollContainer) {
+            const containerWidth = scrollContainer.clientWidth;
+            axisWidth = Math.max(axisWidth, containerWidth);
+        }
+
+        // Store for use in renderItems
+        this.calculatedAxisWidth = axisWidth;
 
         let html = '<div class="gantt-axis-inner" style="width: ' + axisWidth + 'px;">';
 
@@ -116,9 +175,9 @@ class TimelineRenderer {
         if (!this.bodyContainer || !this.labelsContainer) return;
 
         const { items, minDate, maxDate } = this.data;
-        const dayWidth = this.getDayWidth();
-        const totalDays = this.getTotalDays();
-        const barAreaWidth = totalDays * dayWidth;
+
+        // Use calculated width from renderDateAxis (ensures full container width)
+        const barAreaWidth = this.calculatedAxisWidth || (this.getTotalDays() * this.getDayWidth());
 
         const minDateTime = new Date(minDate).getTime();
         const maxDateTime = new Date(maxDate).getTime();
@@ -247,38 +306,12 @@ class TimelineRenderer {
     }
 
     getDayWidth() {
-        const zoomLevel = this.data?.zoomLevel || 'week';
-        switch (zoomLevel) {
-            case 'day': return 60;
-            case 'week': return 40;
-            case 'month': return 20;
-            default: return 40;
-        }
-    }
-
-    getTotalDays() {
-        if (!this.data) return 30;
-        const minDate = new Date(this.data.minDate);
-        const maxDate = new Date(this.data.maxDate);
-        return Math.max(Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)), 7);
-    }
-
-    handleZoom(action) {
-        if (action === 'zoom-in' && this.currentZoomIndex > 0) {
-            this.currentZoomIndex--;
-        } else if (action === 'zoom-out' && this.currentZoomIndex < this.zoomLevels.length - 1) {
-            this.currentZoomIndex++;
-        } else if (action === 'fit') {
-            this.currentZoomIndex = 1; // Default back to week
-        }
-        this.render();
-    }
-
-    getDayWidth() {
-        const zoom = this.zoomLevels[this.currentZoomIndex];
+        if (!this.data) return 40;
+        // Zoom level is now provided by backend in this.data.zoomLevel
+        const zoom = this.data.zoomLevel || 'week';
         if (zoom === 'day') return 120;
         if (zoom === 'week') return 40;
-        if (zoom === 'month') return 10;
+        if (zoom === 'month') return 20; // Improved month width
         return 40;
     }
 
@@ -287,14 +320,6 @@ class TimelineRenderer {
         const min = new Date(this.data.minDate);
         const max = new Date(this.data.maxDate);
         return Math.ceil((max - min) / (1000 * 60 * 60 * 24)) + 1;
-    }
-
-    updateZoomDisplay() {
-        const zoomLabel = this.container.querySelector('.zoom-level');
-        if (zoomLabel) {
-            const zoom = this.zoomLevels[this.currentZoomIndex];
-            zoomLabel.textContent = zoom.charAt(0).toUpperCase() + zoom.slice(1);
-        }
     }
 
     toggleFilterPanel() {

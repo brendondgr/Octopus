@@ -1267,6 +1267,36 @@ header {
     color: var(--color-text-main);
 }
 
+/* Time Range Dropdown */
+.gantt-time-range {
+    display: flex;
+    align-items: center;
+}
+
+.time-range-select {
+    padding: 0.4rem 0.75rem;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-width: 120px;
+}
+
+.time-range-select:hover {
+    background: var(--color-bg);
+    border-color: var(--color-text-muted);
+}
+
+.time-range-select:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(76, 59, 207, 0.1);
+}
+
 /* Filter Panel */
 .gantt-filter-panel {
     padding: 1rem;
