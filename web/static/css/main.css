@@ -1,7 +1,9 @@
 @import 'variables.css';
 
 /* Reset & Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -15,7 +17,12 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-heading);
     font-weight: 700;
 }
@@ -32,7 +39,8 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    align-items: start; /* Don't stretch columns */
+    align-items: start;
+    /* Don't stretch columns */
     padding-bottom: 4rem;
 }
 
@@ -40,18 +48,34 @@ h1, h2, h3, h4, h5, h6 {
 .status-column {
     border-radius: var(--radius-lg);
     padding: 1rem;
-    min-height: 400px; /* Drop target area */
+    min-height: 400px;
+    /* Drop target area */
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    border: 1px solid rgba(0,0,0,0.02);
+    border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 /* Column Specific Colors */
-#col-active { background-color: #f0f9ff; border-top: 4px solid var(--cat-blue-border); }
-#col-completed { background-color: #f0fdf4; border-top: 4px solid var(--cat-green-border); }
-#col-on-hold { background-color: #fffbeb; border-top: 4px solid var(--cat-orange-border); }
-#col-abandoned { background-color: #fef2f2; border-top: 4px solid var(--cat-red-border); }
+#col-active {
+    background-color: #f0f9ff;
+    border-top: 4px solid var(--cat-blue-border);
+}
+
+#col-completed {
+    background-color: #f0fdf4;
+    border-top: 4px solid var(--cat-green-border);
+}
+
+#col-on-hold {
+    background-color: #fffbeb;
+    border-top: 4px solid var(--cat-orange-border);
+}
+
+#col-abandoned {
+    background-color: #fef2f2;
+    border-top: 4px solid var(--cat-red-border);
+}
 
 .column-header {
     display: flex;
@@ -71,7 +95,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-count {
-    background: rgba(255,255,255,0.7);
+    background: rgba(255, 255, 255, 0.7);
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
     font-size: 0.875rem;
@@ -88,9 +112,12 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--shadow-sm);
     transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease;
     border: 1px solid var(--color-border);
-    user-select: none; /* Prevent text selection during drag */
-    touch-action: none; /* Critical for Pointer Events */
-    position: relative; /* Needed for z-index context */
+    user-select: none;
+    /* Prevent text selection during drag */
+    touch-action: none;
+    /* Critical for Pointer Events */
+    position: relative;
+    /* Needed for z-index context */
 }
 
 .drag-handle {
@@ -114,22 +141,27 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Dragging State - The element being moved */
 .project-card.is-dragging {
-    position: fixed; /* Break out of flow */
+    position: fixed;
+    /* Break out of flow */
     z-index: 1000;
     cursor: grabbing;
     box-shadow: var(--shadow-xl);
-    transform: scale(1.05) rotate(2deg); /* Lift effect */
-    pointer-events: none; /* Let events pass through to drop targets */
-    width: var(--drag-width); /* Maintain width */
+    transform: scale(1.05) rotate(2deg);
+    /* Lift effect */
+    pointer-events: none;
+    /* Let events pass through to drop targets */
+    width: var(--drag-width);
+    /* Maintain width */
     height: var(--drag-height);
 }
 
 /* Placeholder - The empty space left behind */
 .card-placeholder {
-    background: rgba(0,0,0,0.03);
+    background: rgba(0, 0, 0, 0.03);
     border-radius: var(--radius-md);
     border: 2px dashed var(--color-border);
-    margin-bottom: 1rem; /* Match gap */
+    margin-bottom: 1rem;
+    /* Match gap */
     width: 100%;
 }
 
@@ -159,14 +191,53 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Dynamic Classes for Categories */
-.cat-blue { background: var(--cat-blue-bg); border: 1px solid var(--cat-blue-border); color: var(--cat-blue-text); }
-.cat-green { background: var(--cat-green-bg); border: 1px solid var(--cat-green-border); color: var(--cat-green-text); }
-.cat-purple { background: var(--cat-purple-bg); border: 1px solid var(--cat-purple-border); color: var(--cat-purple-text); }
-.cat-orange { background: var(--cat-orange-bg); border: 1px solid var(--cat-orange-border); color: var(--cat-orange-text); }
-.cat-red { background: var(--cat-red-bg); border: 1px solid var(--cat-red-border); color: var(--cat-red-text); }
-.cat-teal { background: var(--cat-teal-bg); border: 1px solid var(--cat-teal-border); color: var(--cat-teal-text); }
-.cat-yellow { background: var(--cat-yellow-bg); border: 1px solid var(--cat-yellow-border); color: var(--cat-yellow-text); }
-.cat-pink { background: var(--cat-pink-bg); border: 1px solid var(--cat-pink-border); color: var(--cat-pink-text); }
+.cat-blue {
+    background: var(--cat-blue-bg);
+    border: 1px solid var(--cat-blue-border);
+    color: var(--cat-blue-text);
+}
+
+.cat-green {
+    background: var(--cat-green-bg);
+    border: 1px solid var(--cat-green-border);
+    color: var(--cat-green-text);
+}
+
+.cat-purple {
+    background: var(--cat-purple-bg);
+    border: 1px solid var(--cat-purple-border);
+    color: var(--cat-purple-text);
+}
+
+.cat-orange {
+    background: var(--cat-orange-bg);
+    border: 1px solid var(--cat-orange-border);
+    color: var(--cat-orange-text);
+}
+
+.cat-red {
+    background: var(--cat-red-bg);
+    border: 1px solid var(--cat-red-border);
+    color: var(--cat-red-text);
+}
+
+.cat-teal {
+    background: var(--cat-teal-bg);
+    border: 1px solid var(--cat-teal-border);
+    color: var(--cat-teal-text);
+}
+
+.cat-yellow {
+    background: var(--cat-yellow-bg);
+    border: 1px solid var(--cat-yellow-border);
+    color: var(--cat-yellow-text);
+}
+
+.cat-pink {
+    background: var(--cat-pink-bg);
+    border: 1px solid var(--cat-pink-border);
+    color: var(--cat-pink-text);
+}
 
 .card-title {
     font-size: 1.125rem;
@@ -212,7 +283,7 @@ h1, h2, h3, h4, h5, h6 {
 .date-pill.added {
     color: var(--color-text-muted);
     border-color: var(--color-border);
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .date-pill.done {
@@ -241,48 +312,129 @@ h1, h2, h3, h4, h5, h6 {
     overflow: hidden;
     position: relative;
     border: 1px solid var(--color-border);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .progress-bar {
     height: 100%;
-    background: var(--color-primary); /* Fallback */
+    background: var(--color-primary);
+    /* Fallback */
     border-radius: 0;
     transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Category Specific Progress Bars (Matching Tags) */
-.progress-container.cat-blue { background-color: var(--cat-blue-bg); border-color: var(--cat-blue-border); }
-.progress-bar.cat-blue { background-color: var(--cat-blue-border); }
-.cat-blue .progress-text-overlay { color: var(--cat-blue-text); text-shadow: none; }
+.progress-container.cat-blue {
+    background-color: var(--cat-blue-bg);
+    border-color: var(--cat-blue-border);
+}
 
-.progress-container.cat-green { background-color: var(--cat-green-bg); border-color: var(--cat-green-border); }
-.progress-bar.cat-green { background-color: var(--cat-green-border); }
-.cat-green .progress-text-overlay { color: var(--cat-green-text); text-shadow: none; }
+.progress-bar.cat-blue {
+    background-color: var(--cat-blue-border);
+}
 
-.progress-container.cat-purple { background-color: var(--cat-purple-bg); border-color: var(--cat-purple-border); }
-.progress-bar.cat-purple { background-color: var(--cat-purple-border); }
-.cat-purple .progress-text-overlay { color: var(--cat-purple-text); text-shadow: none; }
+.cat-blue .progress-text-overlay {
+    color: var(--cat-blue-text);
+    text-shadow: none;
+}
 
-.progress-container.cat-orange { background-color: var(--cat-orange-bg); border-color: var(--cat-orange-border); }
-.progress-bar.cat-orange { background-color: var(--cat-orange-border); }
-.cat-orange .progress-text-overlay { color: var(--cat-orange-text); text-shadow: none; }
+.progress-container.cat-green {
+    background-color: var(--cat-green-bg);
+    border-color: var(--cat-green-border);
+}
 
-.progress-container.cat-red { background-color: var(--cat-red-bg); border-color: var(--cat-red-border); }
-.progress-bar.cat-red { background-color: var(--cat-red-border); }
-.cat-red .progress-text-overlay { color: var(--cat-red-text); text-shadow: none; }
+.progress-bar.cat-green {
+    background-color: var(--cat-green-border);
+}
 
-.progress-container.cat-teal { background-color: var(--cat-teal-bg); border-color: var(--cat-teal-border); }
-.progress-bar.cat-teal { background-color: var(--cat-teal-border); }
-.cat-teal .progress-text-overlay { color: var(--cat-teal-text); text-shadow: none; }
+.cat-green .progress-text-overlay {
+    color: var(--cat-green-text);
+    text-shadow: none;
+}
 
-.progress-container.cat-yellow { background-color: var(--cat-yellow-bg); border-color: var(--cat-yellow-border); }
-.progress-bar.cat-yellow { background-color: var(--cat-yellow-border); }
-.cat-yellow .progress-text-overlay { color: var(--cat-yellow-text); text-shadow: none; }
+.progress-container.cat-purple {
+    background-color: var(--cat-purple-bg);
+    border-color: var(--cat-purple-border);
+}
 
-.progress-container.cat-pink { background-color: var(--cat-pink-bg); border-color: var(--cat-pink-border); }
-.progress-bar.cat-pink { background-color: var(--cat-pink-border); }
-.cat-pink .progress-text-overlay { color: var(--cat-pink-text); text-shadow: none; }
+.progress-bar.cat-purple {
+    background-color: var(--cat-purple-border);
+}
+
+.cat-purple .progress-text-overlay {
+    color: var(--cat-purple-text);
+    text-shadow: none;
+}
+
+.progress-container.cat-orange {
+    background-color: var(--cat-orange-bg);
+    border-color: var(--cat-orange-border);
+}
+
+.progress-bar.cat-orange {
+    background-color: var(--cat-orange-border);
+}
+
+.cat-orange .progress-text-overlay {
+    color: var(--cat-orange-text);
+    text-shadow: none;
+}
+
+.progress-container.cat-red {
+    background-color: var(--cat-red-bg);
+    border-color: var(--cat-red-border);
+}
+
+.progress-bar.cat-red {
+    background-color: var(--cat-red-border);
+}
+
+.cat-red .progress-text-overlay {
+    color: var(--cat-red-text);
+    text-shadow: none;
+}
+
+.progress-container.cat-teal {
+    background-color: var(--cat-teal-bg);
+    border-color: var(--cat-teal-border);
+}
+
+.progress-bar.cat-teal {
+    background-color: var(--cat-teal-border);
+}
+
+.cat-teal .progress-text-overlay {
+    color: var(--cat-teal-text);
+    text-shadow: none;
+}
+
+.progress-container.cat-yellow {
+    background-color: var(--cat-yellow-bg);
+    border-color: var(--cat-yellow-border);
+}
+
+.progress-bar.cat-yellow {
+    background-color: var(--cat-yellow-border);
+}
+
+.cat-yellow .progress-text-overlay {
+    color: var(--cat-yellow-text);
+    text-shadow: none;
+}
+
+.progress-container.cat-pink {
+    background-color: var(--cat-pink-bg);
+    border-color: var(--cat-pink-border);
+}
+
+.progress-bar.cat-pink {
+    background-color: var(--cat-pink-border);
+}
+
+.cat-pink .progress-text-overlay {
+    color: var(--cat-pink-text);
+    text-shadow: none;
+}
 
 .progress-text-overlay {
     position: absolute;
@@ -292,7 +444,8 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.75rem;
     font-weight: 800;
     font-family: var(--font-mono);
-    color: white; /* Fallback */
+    color: white;
+    /* Fallback */
     pointer-events: none;
     z-index: 1;
     letter-spacing: 0.05em;
@@ -313,6 +466,42 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.tab-interface.header-tabs {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+    margin: 0;
+}
+
+.tab-interface.header-tabs .tab-button {
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+    border: none;
+}
+
+.tab-interface.header-tabs .tab-button:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--color-primary);
+}
+
+.tab-interface.header-tabs .tab-button.active {
+    background: white;
+    color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .brand {
@@ -352,7 +541,7 @@ header {
 }
 
 .btn-secondary:hover {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     color: var(--color-text-main);
 }
 
@@ -451,13 +640,25 @@ header {
 
 /* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* Vertical Layout for Modal Section */
@@ -502,7 +703,7 @@ header {
 }
 
 /* Selected State */
-.badge-option input:checked + .category-badge {
+.badge-option input:checked+.category-badge {
     transform: scale(1.05);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     /* Add a ring effect using existing border or shadow? 
@@ -586,8 +787,10 @@ header {
 /* Badge Dropdown Trigger */
 .badge-trigger {
     width: 100%;
-    height: 42px; /* Match Input Height approximately */
-    display: flex; /* Override badge inline-block */
+    height: 42px;
+    /* Match Input Height approximately */
+    display: flex;
+    /* Override badge inline-block */
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -596,7 +799,8 @@ header {
 
 /* Ensure no double padding/borders from dropdown-selected base class */
 .dropdown-selected.badge-trigger {
-    border: 1px solid transparent; /* The badge color handles visuals */
+    border: 1px solid transparent;
+    /* The badge color handles visuals */
     padding: 0.25rem 0.5rem;
 }
 
@@ -895,3 +1099,650 @@ header {
     cursor: pointer;
 }
 
+
+/* =========================
+   TAB INTERFACE
+========================= */
+.tab-interface {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 0 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 1rem;
+}
+
+.tab-interface.modal-tabs {
+    padding: 0.5rem 0;
+    margin-bottom: 0.75rem;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-spring);
+}
+
+.tab-button:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--color-text-main);
+}
+
+.tab-button.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.tab-button svg {
+    opacity: 0.7;
+}
+
+.tab-button.active svg {
+    opacity: 1;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+
+/* =========================
+   GANTT TIMELINE
+========================= */
+.gantt-container {
+    position: relative;
+    background: var(--color-surface-elevated);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.gantt-container.modal-gantt {
+    background: var(--color-bg);
+    border: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Gantt Controls */
+.gantt-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.gantt-controls.compact {
+    padding: 0.5rem 0.75rem;
+}
+
+.gantt-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-zoom {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-zoom:hover {
+    background: var(--color-bg);
+    color: var(--color-text-main);
+    border-color: var(--color-text-muted);
+}
+
+.zoom-level {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    min-width: 50px;
+    text-align: center;
+}
+
+.btn-filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-filter-toggle:hover {
+    background: var(--color-bg);
+    color: var(--color-text-main);
+}
+
+/* Filter Panel */
+.gantt-filter-panel {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.gantt-filter-panel.hidden {
+    display: none;
+}
+
+.filter-group {
+    margin-bottom: 0.75rem;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-group label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    cursor: pointer;
+}
+
+.filter-checkbox input {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+/* Gantt Chart */
+.gantt-chart {
+    display: flex;
+    overflow: hidden;
+    /* Main container doesn't scroll, inner container does */
+}
+
+.gantt-chart.compact .gantt-header {
+    min-height: 32px;
+}
+
+.gantt-labels-column {
+    flex-shrink: 0;
+    width: 200px;
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    z-index: 5;
+}
+
+.gantt-label-header {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--color-border);
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.gantt-scroll-container {
+    flex: 1;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.gantt-header {
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 4;
+    min-height: 40px;
+}
+
+.gantt-axis {
+    position: relative;
+    min-height: 32px;
+}
+
+.gantt-axis-inner {
+    position: relative;
+    height: 100%;
+}
+
+.gantt-axis-tick {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 1px solid var(--color-border);
+    padding-left: 0.5rem;
+}
+
+.axis-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    padding-top: 0.5rem;
+}
+
+/* Gantt Body */
+.gantt-body {
+    min-height: 100px;
+    position: relative;
+}
+
+.gantt-row {
+    display: flex;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    height: 36px;
+}
+
+.gantt-row:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.gantt-row.project-row {
+    background: rgba(0, 0, 0, 0.01);
+}
+
+.gantt-labels-body .gantt-label {
+    height: 36px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.gantt-label.goal-label {
+    padding-left: 2rem;
+}
+
+.gantt-label.hidden {
+    display: none;
+}
+
+.btn-toggle-expand {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.btn-toggle-expand:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--color-text-main);
+}
+
+.btn-toggle-expand svg {
+    transition: transform 0.2s;
+}
+
+.btn-toggle-expand.collapsed svg {
+    transform: rotate(-90deg);
+}
+
+.label-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.label-text:hover {
+    color: var(--color-primary);
+}
+
+.gantt-bar-area {
+    position: relative;
+    height: 100%;
+    padding: 0;
+}
+
+.gantt-row.hidden {
+    display: none;
+}
+
+/* Gantt Items */
+.gantt-item {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.gantt-item:hover {
+    transform: translateY(-50%) scale(1.02);
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+}
+
+.gantt-item-project {
+    height: 24px;
+    font-weight: 700;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.gantt-item-goal {
+    height: 16px;
+    font-size: 0.7rem;
+    background: transparent !important;
+    /* Goal background depends on status/type */
+    border: 2px solid currentColor;
+}
+
+.bar-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Category colors for Gantt items */
+/* Projects are solid */
+.gantt-item-project.cat-blue {
+    background: var(--cat-blue-border);
+    color: white;
+}
+
+.gantt-item-project.cat-green {
+    background: var(--cat-green-border);
+    color: white;
+}
+
+.gantt-item-project.cat-purple {
+    background: var(--cat-purple-border);
+    color: white;
+}
+
+.gantt-item-project.cat-orange {
+    background: var(--cat-orange-border);
+    color: white;
+}
+
+.gantt-item-project.cat-red {
+    background: var(--cat-red-border);
+    color: white;
+}
+
+.gantt-item-project.cat-teal {
+    background: var(--cat-teal-border);
+    color: white;
+}
+
+.gantt-item-project.cat-yellow {
+    background: var(--cat-yellow-border);
+    color: var(--color-text-main);
+}
+
+.gantt-item-project.cat-pink {
+    background: var(--cat-pink-border);
+    color: white;
+}
+
+/* Goals are outlined by default */
+.gantt-item-goal.cat-blue {
+    color: var(--cat-blue-border);
+    border-color: var(--cat-blue-border);
+}
+
+.gantt-item-goal.cat-green {
+    color: var(--cat-green-border);
+    border-color: var(--cat-green-border);
+}
+
+.gantt-item-goal.cat-purple {
+    color: var(--cat-purple-border);
+    border-color: var(--cat-purple-border);
+}
+
+.gantt-item-goal.cat-orange {
+    color: var(--cat-orange-border);
+    border-color: var(--cat-orange-border);
+}
+
+.gantt-item-goal.cat-red {
+    color: var(--cat-red-border);
+    border-color: var(--cat-red-border);
+}
+
+.gantt-item-goal.cat-teal {
+    color: var(--cat-teal-border);
+    border-color: var(--cat-teal-border);
+}
+
+.gantt-item-goal.cat-yellow {
+    color: var(--cat-yellow-border);
+    border-color: var(--cat-yellow-border);
+}
+
+.gantt-item-goal.cat-pink {
+    color: var(--cat-pink-border);
+    border-color: var(--cat-pink-border);
+}
+
+/* Completed Goals become solid but softer */
+.gantt-item-goal.gantt-item-completed.cat-blue {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: var(--cat-blue-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-green {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: var(--cat-green-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-purple {
+    background: rgba(168, 85, 247, 0.2) !important;
+    color: var(--cat-purple-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-orange {
+    background: rgba(249, 115, 22, 0.2) !important;
+    color: var(--cat-orange-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-red {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: var(--cat-red-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-teal {
+    background: rgba(20, 184, 166, 0.2) !important;
+    color: var(--cat-teal-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-yellow {
+    background: rgba(234, 179, 8, 0.2) !important;
+    color: var(--cat-yellow-border);
+}
+
+.gantt-item-goal.gantt-item-completed.cat-pink {
+    background: rgba(236, 72, 153, 0.2) !important;
+    color: var(--cat-pink-border);
+}
+
+/* Status styles */
+.gantt-item-pending {
+    border-style: dashed;
+}
+
+.gantt-item-onhold {
+    background: repeating-linear-gradient(45deg,
+            rgba(0, 0, 0, 0.05),
+            rgba(0, 0, 0, 0.05) 5px,
+            transparent 5px,
+            transparent 10px) !important;
+}
+
+.gantt-item-abandoned {
+    opacity: 0.3;
+    filter: grayscale(1);
+}
+
+/* Gantt Tooltip */
+.gantt-tooltip {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.75rem;
+    min-width: 180px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    pointer-events: none;
+}
+
+.gantt-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tooltip-type {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    background: var(--color-bg);
+    border-radius: 3px;
+    color: var(--color-text-muted);
+}
+
+.tooltip-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-text-main);
+}
+
+.tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.tooltip-row:last-child {
+    margin-bottom: 0;
+}
+
+.tooltip-label {
+    color: var(--color-text-muted);
+}
+
+.tooltip-value {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--color-text-main);
+}
+
+/* Empty State */
+.gantt-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.gantt-empty-state svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.gantt-empty-state p {
+    font-size: 0.9rem;
+}
+
+.gantt-error-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--cat-red-text);
+    background: var(--cat-red-bg);
+    border-radius: var(--radius-md);
+    margin: 1rem;
+}

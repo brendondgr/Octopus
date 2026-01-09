@@ -1,0 +1,111 @@
+<!-- Gantt Timeline Component -->
+<div class="gantt-container" id="{{ container_id or 'gantt-timeline' }}" data-project-id="{{ project_id or '' }}">
+    <!-- Controls Header -->
+    <div class="gantt-controls">
+        <div class="gantt-zoom-controls">
+            <button class="btn-zoom" data-action="zoom-out" title="Zoom Out">−</button>
+            <span class="zoom-level">Week</span>
+            <button class="btn-zoom" data-action="zoom-in" title="Zoom In">+</button>
+            <button class="btn-zoom" data-action="fit" title="Fit to Data">⟲</button>
+        </div>
+        <div class="gantt-filter-toggle">
+            <button class="btn-filter-toggle" data-action="toggle-filter">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Panel (Collapsible) -->
+    <div class="gantt-filter-panel hidden">
+        <div class="filter-group">
+            <label>Status</label>
+            <div class="filter-options">
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="status" value="Active" checked> Active
+                </label>
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="status" value="Completed"> Completed
+                </label>
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="status" value="Pending"> Pending
+                </label>
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="status" value="On-Hold"> On-Hold
+                </label>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label>Type</label>
+            <div class="filter-options">
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="type" value="project" checked> Projects
+                </label>
+                <label class="filter-checkbox">
+                    <input type="checkbox" name="type" value="goal" checked> Goals
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Chart -->
+    <div class="gantt-chart">
+        <div class="gantt-labels-column">
+            <div class="gantt-label-header">Item</div>
+            <div class="gantt-labels-body" id="{{ container_id or 'gantt-timeline' }}-labels">
+                <!-- Labels populated by JS -->
+            </div>
+        </div>
+        
+        <div class="gantt-scroll-container">
+            <!-- Date Axis Header -->
+            <div class="gantt-header">
+                <div class="gantt-axis" id="{{ container_id or 'gantt-timeline' }}-axis">
+                    <!-- Date labels populated by JS -->
+                </div>
+            </div>
+
+            <!-- Timeline Body -->
+            <div class="gantt-body" id="{{ container_id or 'gantt-timeline' }}-body">
+                <!-- Item rows populated by JS -->
+                <div class="gantt-empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <p>No timeline data available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip (hidden by default) -->
+    <div class="gantt-tooltip" id="{{ container_id or 'gantt-timeline' }}-tooltip">
+        <div class="tooltip-header">
+            <span class="tooltip-type"></span>
+            <span class="tooltip-name"></span>
+        </div>
+        <div class="tooltip-body">
+            <div class="tooltip-row">
+                <span class="tooltip-label">Start:</span>
+                <span class="tooltip-value tooltip-start"></span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">End:</span>
+                <span class="tooltip-value tooltip-end"></span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Duration:</span>
+                <span class="tooltip-value tooltip-duration"></span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Status:</span>
+                <span class="tooltip-value tooltip-status"></span>
+            </div>
+        </div>
+    </div>
+</div>

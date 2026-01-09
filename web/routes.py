@@ -184,3 +184,114 @@ def project_progress(project_id):
         <div class="progress-bar cat-{color}" style="width: {progress}%"></div>
         <span class="progress-text-overlay">{progress}%</span>
     '''
+
+
+# =====================
+# Timeline API Routes
+# =====================
+from utils.timeline import (
+    get_timeline_items_for_dashboard,
+    get_timeline_items_for_project,
+    calculate_date_range,
+    filter_timeline_items,
+    prepare_gantt_data
+)
+
+
+@bp.route('/api/timeline/dashboard', methods=['GET'])
+def timeline_dashboard():
+    """Return Gantt timeline data for all projects and goals."""
+    projects = Project.query.join(Category).order_by(Project.order_index).all()
+    
+    # Get all timeline items
+    items = get_timeline_items_for_dashboard(projects)
+    
+    # Apply filters from query params
+    status_filter = request.args.get('status')
+    type_filter = request.args.get('type')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    if status_filter or type_filter or start_date or end_date:
+        status_list = status_filter.split(',') if status_filter else None
+        date_start = datetime.fromisoformat(start_date) if start_date else None
+        date_end = datetime.fromisoformat(end_date) if end_date else None
+        
+        items = filter_timeline_items(
+            items,
+            date_start=date_start,
+            date_end=date_end,
+            status=status_list,
+            item_type=type_filter
+        )
+    
+    # Calculate date range and prepare Gantt data
+    date_range = calculate_date_range(items)
+    gantt_data = prepare_gantt_data(items, date_range)
+    
+    return jsonify(gantt_data)
+
+
+@bp.route('/api/timeline/project/<int:project_id>', methods=['GET'])
+def timeline_project(project_id):
+    """Return Gantt timeline data for a specific project's goals."""
+    project = Project.query.get_or_404(project_id)
+    
+    # Get timeline items for this project
+    items = get_timeline_items_for_project(project)
+    
+    # Apply filters from query params
+    status_filter = request.args.get('status')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    if status_filter or start_date or end_date:
+        status_list = status_filter.split(',') if status_filter else None
+        date_start = datetime.fromisoformat(start_date) if start_date else None
+        date_end = datetime.fromisoformat(end_date) if end_date else None
+        
+        items = filter_timeline_items(
+            items,
+            date_start=date_start,
+            date_end=date_end,
+            status=status_list
+        )
+    
+    # Calculate date range and prepare Gantt data
+    date_range = calculate_date_range(items)
+    gantt_data = prepare_gantt_data(items, date_range)
+    
+    return jsonify(gantt_data)
+
+
+@bp.route('/api/timeline/filter', methods=['GET'])
+def timeline_filter():
+    """Advanced filtering endpoint supporting multiple filters."""
+    projects = Project.query.join(Category).order_by(Project.order_index).all()
+    items = get_timeline_items_for_dashboard(projects)
+    
+    # Parse all filter parameters
+    status_filter = request.args.get('status')
+    type_filter = request.args.get('type')
+    project_id = request.args.get('project_id', type=int)
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    status_list = status_filter.split(',') if status_filter else None
+    date_start = datetime.fromisoformat(start_date) if start_date else None
+    date_end = datetime.fromisoformat(end_date) if end_date else None
+    
+    items = filter_timeline_items(
+        items,
+        date_start=date_start,
+        date_end=date_end,
+        status=status_list,
+        project_id=project_id,
+        item_type=type_filter
+    )
+    
+    date_range = calculate_date_range(items)
+    gantt_data = prepare_gantt_data(items, date_range)
+    
+    return jsonify(gantt_data)
+

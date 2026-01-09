@@ -58,6 +58,33 @@ class Project(db.Model):
             'deadline': self.deadline.isoformat() if self.deadline else None
         }
 
+    def get_duration_days(self):
+        """Calculate days between creation and completion (or now)."""
+        if not self.date_created:
+            return 0
+        end = self.date_completed or datetime.utcnow()
+        delta = end - self.date_created
+        return delta.days
+
+    def get_timeline_item(self):
+        """Return timeline-compatible dict for Gantt visualization."""
+        # Use date_completed if available, otherwise use current date for active projects
+        end_date = self.date_completed or datetime.utcnow()
+        
+        return {
+            'id': self.id,
+            'name': self.title,
+            'type': 'project',
+            'start_date': self.date_created.isoformat() if self.date_created else None,
+            'end_date': end_date.isoformat() if end_date else None,
+            'status': self.status,
+            'category_color': self.category.color if self.category else 'blue',
+            'project_id': None,
+            'goal_count': len(self.goals),
+            'progress': self.calculate_progress(),
+            'duration_days': self.get_duration_days()
+        }
+
 
 class Goal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,4 +104,26 @@ class Goal(db.Model):
             'date_created': self.date_created.isoformat() if self.date_created else None,
             'date_completed': self.date_completed.isoformat() if self.date_completed else None,
             'deadline': self.deadline.isoformat() if self.deadline else None
+        }
+
+    def get_duration_days(self):
+        """Calculate days between creation and completion (or now)."""
+        if not self.date_created:
+            return 0
+        end = self.date_completed or datetime.utcnow()
+        delta = end - self.date_created
+        return delta.days
+
+    def get_timeline_item(self):
+        """Return timeline-compatible dict for Gantt visualization."""
+        return {
+            'id': self.id,
+            'name': self.title,
+            'type': 'goal',
+            'start_date': self.date_created.isoformat() if self.date_created else None,
+            'end_date': self.date_completed.isoformat() if self.date_completed else None,
+            'status': self.status,
+            'category_color': self.project.category.color if self.project and self.project.category else 'blue',
+            'project_id': self.project_id,
+            'duration_days': self.get_duration_days()
         }

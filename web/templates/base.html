@@ -21,12 +21,36 @@
     <header>
         <div class="container header-content">
             <div class="brand">Octopus</div>
-            <button class="btn-primary" 
-                    hx-get="/project/modal/new" 
-                    hx-target="#modal-container" 
-                    hx-swap="innerHTML">
-                + New Project
-            </button>
+            
+            <div class="header-actions">
+                <!-- Tab Interface -->
+                <div class="tab-interface header-tabs" data-group="dashboard">
+                    <button class="tab-button active" data-tab="cards">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Cards
+                    </button>
+                    <button class="tab-button" data-tab="timeline">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="6" x2="20" y2="6"></line>
+                            <line x1="4" y1="12" x2="16" y2="12"></line>
+                            <line x1="4" y1="18" x2="12" y2="18"></line>
+                        </svg>
+                        Timeline
+                    </button>
+                </div>
+
+                <button class="btn-primary" 
+                        hx-get="/project/modal/new" 
+                        hx-target="#modal-container" 
+                        hx-swap="innerHTML">
+                    + New Project
+                </button>
+            </div>
         </div>
     </header>
 
@@ -38,6 +62,7 @@
 
     <!-- JS -->
     <script src="{{ url_for('static', filename='js/drag_drop.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/timeline.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
