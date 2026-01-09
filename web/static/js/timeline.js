@@ -382,7 +382,26 @@ const timelineManager = {
 
             // Sync vertical scroll between labels and body
             this.setupScrollSync(containerId);
+
+            // Listen for global timeline updates (e.g., from goal additions/status changes)
+            if (!this.hasGlobalListener) {
+                document.body.addEventListener('timeline-updated', () => {
+                    this.refreshAll();
+                });
+                this.hasGlobalListener = true;
+            }
         }
+    },
+
+    refreshAll() {
+        this.renderers.forEach((renderer, containerId) => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const projectId = container.dataset.projectId;
+                const endpoint = projectId ? `/api/timeline/project/${projectId}` : '/api/timeline/dashboard';
+                renderer.loadData(endpoint);
+            }
+        });
     },
 
     setupScrollSync(containerId) {

@@ -67,3 +67,30 @@ This document details the step-by-step plans to build **Octopus**. We will follo
     - Add visual cues (Time remaining, "Overdue" red styling).
 2.  **Refinement**: - Review against `docs/ui.md` for any missing polish (Translucency, Shadows). - Ensure mobile responsiveness.
     **Deliverable**: The final, polished "Octopus" application.
+
+## Plan #6: Edit Functionality (Projects & Goals)
+
+**Goal**: Enable full editing capabilities for both Projects and Goals, allowing users to modify all attributes after creation.
+
+1.  **Project Editing**:
+    - Add "Edit" button/icon to `project_card.html` template.
+    - Create `edit_project.html` modal template (or extend `new_project.html` to handle both create/edit modes).
+    - Implement `GET /project/<id>/edit` route to return the edit form with pre-populated data.
+    - Implement `POST /project/<id>/edit` route to update project fields (name, description, deadline, status, etc.) in the database.
+    - Integrate HTMX for seamless form submission and card refresh without full page reload.
+2.  **Goal Editing**:
+    - Add "Edit" button/icon to `goal_item.html` template within the Project Details modal.
+    - Create inline editing or modal editing for goals (allow editing name, description, deadline, priority, etc.).
+    - Implement `GET /goal/<id>/edit` route to return the edit form.
+    - Implement `POST /goal/<id>/edit` route to update goal fields in the database.
+    - Ensure edited goals refresh in the Project Details modal via HTMX.
+3.  **UI/UX Considerations**:
+    - Add visual indicators (edit icons, hover states) to show editable elements.
+    - Implement form validation for edited fields (match create validation).
+    - Add "Cancel" functionality to exit edit mode without saving.
+    - Ensure edit modals/forms match the design system from `docs/ui.md`.
+4.  **Backend Updates**:
+    - Update `web/models.py` methods if needed to support partial updates.
+    - Add proper error handling for edit operations (e.g., project/goal not found).
+    - Ensure database transactions are handled correctly for updates.
+    **Deliverable**: Users can edit any project or goal attribute (name, description, deadline, etc.) with a seamless, intuitive interface that persists changes immediately.

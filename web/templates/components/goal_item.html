@@ -22,6 +22,12 @@
             {% if goal.status == 'Completed' and goal.date_completed %}
                 <span title="Completed">Completed {{ goal.date_completed.strftime('%y-%m-%d') }}</span>
             {% endif %}
+            {% if goal.deadline and goal.status != 'Completed' %}
+                {% set deadline_status = goal.get_deadline_status() %}
+                <span class="{{ deadline_status.css_class }}" title="Deadline: {{ deadline_status.date_formatted }}">
+                    {{ deadline_status.display }}
+                </span>
+            {% endif %}
         </div>
     </div>
     

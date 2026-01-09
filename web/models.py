@@ -85,6 +85,11 @@ class Project(db.Model):
             'duration_days': self.get_duration_days()
         }
 
+    def get_deadline_status(self):
+        """Return deadline status with display text and CSS class."""
+        from utils.deadline import get_deadline_status
+        return get_deadline_status(self.deadline)
+
 
 class Goal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -127,3 +132,9 @@ class Goal(db.Model):
             'project_id': self.project_id,
             'duration_days': self.get_duration_days()
         }
+
+    def get_deadline_status(self):
+        """Return deadline status with display text and CSS class."""
+        from utils.deadline import get_deadline_status
+        return get_deadline_status(self.deadline)
+

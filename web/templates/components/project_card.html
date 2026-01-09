@@ -17,6 +17,12 @@
                 {% elif project.status == 'Abandoned' and project.date_abandoned %}
                     <span class="date-pill dropped" title="Abandoned">Abandoned {{ project.date_abandoned.strftime('%y-%m-%d') }}</span>
                 {% endif %}
+                {% if project.deadline and project.status == 'Active' %}
+                    {% set deadline_status = project.get_deadline_status() %}
+                    <span class="date-pill deadline {{ deadline_status.css_class }}" title="Deadline">
+                        {{ deadline_status.display }}
+                    </span>
+                {% endif %}
             </div>
         </div>
         <h3 class="card-title">{{ project.title }}</h3>

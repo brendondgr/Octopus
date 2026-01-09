@@ -44,12 +44,22 @@ def create_project():
     max_order = db.session.query(db.func.max(Project.order_index)).scalar()
     new_order = (max_order or 0) + 1
     
+    # Parse optional deadline
+    deadline = None
+    deadline_str = data.get('deadline')
+    if deadline_str:
+        try:
+            deadline = datetime.fromisoformat(deadline_str)
+        except ValueError:
+            pass  # Invalid date format, ignore
+    
     new_project = Project(
         title=data.get('title'),
         description=data.get('description'),
         category=category, # SQLAlchemy handles the relationshp
         status='Active',
-        order_index=new_order
+        order_index=new_order,
+        deadline=deadline
     )
     
     db.session.add(new_project)
@@ -75,9 +85,18 @@ def update_project(project_id):
             project.date_on_hold = now
         elif new_status == 'Abandoned':
             project.date_abandoned = now
+        else:
+            # Reset dates if moved back to Active
+            project.date_completed = None
+            project.date_on_hold = None
+            project.date_abandoned = None
         
     db.session.commit()
-    return jsonify({'success': True})
+    
+    # Return updated card and trigger timeline update
+    response = make_response(render_template('components/project_card.html', project=project))
+    response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}})
+    return response
 
 
 # =====================
@@ -100,10 +119,20 @@ def create_goal(project_id):
     if not title:
         return '', 400
     
+    # Parse optional deadline
+    deadline = None
+    deadline_str = request.form.get('deadline')
+    if deadline_str:
+        try:
+            deadline = datetime.fromisoformat(deadline_str)
+        except ValueError:
+            pass  # Invalid date format, ignore
+    
     goal = Goal(
         project_id=project.id,
         title=title,
-        status='Pending'
+        status='Pending',
+        deadline=deadline
     )
     db.session.add(goal)
     db.session.commit()
@@ -115,7 +144,8 @@ def create_goal(project_id):
             "projectId": project.id,
             "progress": project.calculate_progress(),
             "goalCount": f"{completed}/{len(project.goals)}"
-        }
+        },
+        "timeline-updated": {}
     }
     
     response = make_response(render_template('components/goal_item.html', goal=goal))
@@ -144,7 +174,8 @@ def toggle_goal(goal_id):
             "projectId": project.id,
             "progress": project.calculate_progress(),
             "goalCount": f"{completed}/{len(project.goals)}"
-        }
+        },
+        "timeline-updated": {}
     }
     
     response = make_response(render_template('components/goal_item.html', goal=goal))
@@ -166,7 +197,8 @@ def delete_goal(goal_id):
             "projectId": project.id,
             "progress": project.calculate_progress(),
             "goalCount": f"{completed}/{len(project.goals)}"
-        }
+        },
+        "timeline-updated": {}
     }
     
     response = make_response('')
