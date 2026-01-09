@@ -22,6 +22,8 @@ Octopus/
 ├── config.py               # Configuration (Secret keys, DB path)
 ├── requirements.txt        # Python Dependencies
 ├── utils/                  # Helper utilities (Date calculations, custom logic)
+│   ├── __init__.py
+│   └── timeline.py         # Gantt timeline data preparation
 ├── docs/                   # Documentation
 │   ├── application.md      # This file
 │   ├── plans.md            # Implementation Plans
@@ -36,6 +38,7 @@ Octopus/
     │   │   └── main.css      # Core styles
     │   ├── js/
     │   │   ├── app.js        # General interactions
+    │   │   ├── timeline.js   # Gantt timeline rendering logic
     │   │   └── drag_drop.js  # Drag and drop logic
     │   └── img/
     └── templates/
@@ -44,6 +47,7 @@ Octopus/
         └── components/     # Reusable fragments
             ├── project_card.html
             ├── goal_item.html
+            ├── gantt_timeline.html # Gantt chart component
             └── modals/
 ```
 
@@ -76,8 +80,17 @@ Octopus/
 - **Progress Calculation**: Python logic in `Project.calculate_progress()` determines completion percentage based on child Goals.
 - **Themed Aesthetics**: Progress bars and UI elements dynamically match category colors (using background, border, and text variables from `@docs/ui.md`).
 - **Descriptive Timestamps**: Logic translates raw timestamps into readable formats like "Added on...", "Held since...", etc., depending on the project's current status.
-- **Duration Calculation**: Python logic to calculate "Days to Complete" based on `date_created` vs `date_completed`.
-- **Timeline Visualization**: Calculate weekly breakdowns of completed tasks for the visualization chart.
+- **Duration Calculation**: Python logic to calculate "Days to Complete" based on `date_created` vs `date_completed`. JavaScript scaling logic provides human-readable durations (Hours, Days, Months, Years).
+- **Gantt Timeline Visualization**: 
+  - **Hierarchical Layout**: Displays projects and their nested goals in a chronological Gantt-style chart.
+  - **Interactive Toggles**: Projects can be collapsed/expanded to hide/show their respective goals.
+  - **Dynamic Zooming**: Supports Day, Week, and Month zoom levels with re-calculated axis ticks.
+  - **Type-based Styling**: Projects use solid fill categories; Goals use an outlined/subtle style for visual hierarchy.
+  - **Enhanced Tooltips**:
+    - **Precise Timing**: Formats dates as `YYYY-MM-DD: HH:MM:SS AM/PM` (EST).
+    - **Intelligent Durations**: Automatically scales units based on length (<48h = Hours, 48h-60d = Days, 60d-24m = Months, >24m = Years).
+    - **Clipping Prevention**: Tooltips perform boundary checks against the viewport and container to prevent being cut off.
+  - **Synchronized Scrolling**: Ensures the date axis and timeline body scroll horizontally as a single unit while keeping labels pinned.
 
 ## 5. UI/UX Strategy
 
