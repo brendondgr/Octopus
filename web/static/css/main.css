@@ -9,12 +9,20 @@
     padding: 0;
 }
 
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     background-color: var(--color-bg);
     font-family: var(--font-body);
     color: var(--color-text-main);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
 }
 
 h1,
@@ -34,26 +42,63 @@ h6 {
     padding: 1.5rem 3rem;
 }
 
+main.container {
+    flex: 1;
+    overflow: hidden;
+    padding-bottom: 0;
+}
+
 /* Layout - Dashboard */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 1rem;
-    align-items: start;
-    /* Don't stretch columns */
-    padding-bottom: 4rem;
+    align-items: stretch;
+    height: 100%;
+    padding-bottom: 2rem;
 }
 
 /* Columns */
 .status-column {
     border-radius: var(--radius-lg);
     padding: 1rem;
-    min-height: 400px;
+    height: 100%;
     /* Drop target area */
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     border: 1px solid rgba(0, 0, 0, 0.02);
+    align-content: start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.status-column::-webkit-scrollbar {
+    width: 6px;
+}
+
+.status-column::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.status-column::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 20px;
+}
+
+/* Column header spans both columns and is sticky */
+.status-column .column-header {
+    grid-column: 1 / -1;
+    position: sticky;
+    top: -1rem;
+    /* Adjust for padding */
+    background: inherit;
+    z-index: 5;
+    padding: 0.5rem 0;
+    margin-top: -0.5rem;
 }
 
 /* Column Specific Colors */
@@ -471,13 +516,17 @@ h6 {
 
 /* Header */
 header {
-    padding: 1rem 0;
+    padding: 0.5rem 0;
     background: rgba(254, 251, 246, 0.8);
     backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 10;
     border-bottom: 1px solid var(--color-border);
+}
+
+header .container {
+    padding: 0.5rem 3rem;
 }
 
 .header-content {
@@ -499,6 +548,15 @@ header {
     padding: 3px;
     gap: 2px;
     margin: 0;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    height: 100%;
 }
 
 .tab-interface.header-tabs .tab-button {
@@ -523,7 +581,7 @@ header {
 }
 
 .brand {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-primary);
     letter-spacing: -0.02em;
@@ -533,7 +591,7 @@ header {
     background: var(--color-primary);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.25rem;
     border-radius: var(--radius-md);
     font-weight: 600;
     font-family: var(--font-body);
@@ -550,7 +608,7 @@ header {
     background: transparent;
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1.25rem;
     border-radius: var(--radius-md);
     font-weight: 600;
     font-family: var(--font-body);
@@ -2009,10 +2067,12 @@ header {
 @media (max-width: 768px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
         gap: 1.5rem;
     }
 
     .status-column {
+        grid-template-columns: 1fr;
         min-height: auto;
     }
 
@@ -2089,6 +2149,11 @@ header {
 @media (min-width: 768px) and (max-width: 1024px) {
     .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+
+    .status-column {
+        grid-template-columns: 1fr;
     }
 
     .container {
