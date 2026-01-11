@@ -1,15 +1,12 @@
 function initDragAndDrop() {
-    const cards = document.querySelectorAll('.project-card');
-
     let activeCard = null;
     let initialX, initialY;
     let cardRect;
     let placeholder = null;
     let dragHandle = null;
 
-    cards.forEach(card => {
-        card.addEventListener('pointerdown', handleDragStart);
-    });
+    // Use event delegation - attach to body once, works for all current and future cards
+    document.body.addEventListener('pointerdown', handleDragStart);
 
     function handleDragStart(e) {
         if (e.button !== 0) return;

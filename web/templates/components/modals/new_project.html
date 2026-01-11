@@ -39,12 +39,12 @@
                                placeholder="Type or select..."
                                id="cat-name-input"
                                autocomplete="off">
-                        <button type="button" class="combo-toggle" onclick="toggleCategoryList()">▼</button>
+                        <button type="button" class="combo-toggle">▼</button>
                         
                         <!-- Suggestions -->
                         <div class="custom-options-list" id="category-list">
                             {% for cat in categories %}
-                                <div class="option-item" onclick="selectCategory('{{ cat.name }}', '{{ cat.color }}')">
+                                <div class="option-item" data-color="{{ cat.color }}">
                                     <span class="swatch-circle bg-{{ cat.color }} sm"></span>
                                     <span>{{ cat.name }}</span>
                                 </div>
@@ -79,73 +79,97 @@
     </div>
 
     <script>
-        // --- State ---
-        const nameInput = document.getElementById('cat-name-input');
-        const categoryList = document.getElementById('category-list');
-        const dynamicBadges = document.querySelectorAll('.dynamic-badge');
+        // IIFE to scope all variables to this modal instance
+        (function() {
+            // Scope to this specific modal
+            const modal = document.currentScript.closest('.modal-backdrop');
+            if (!modal) return;
 
-        // --- Logic ---
+            const nameInput = modal.querySelector('#cat-name-input');
+            const categoryList = modal.querySelector('#category-list');
+            const dynamicBadges = modal.querySelectorAll('.dynamic-badge');
 
-        // 1. Update All Badges Text
-        function updateBadges(text) {
-            const display = text || 'Category';
-            dynamicBadges.forEach(badge => {
-                badge.textContent = display;
+            if (!nameInput || !categoryList) return;
+
+            // --- Logic ---
+
+            // 1. Update All Badges Text
+            function updateBadges(text) {
+                const display = text || 'Category';
+                dynamicBadges.forEach(badge => {
+                    badge.textContent = display;
+                });
+            }
+
+            nameInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                updateBadges(val);
+                
+                // Filter List
+                const items = categoryList.querySelectorAll('.option-item');
+                let hasMatch = false;
+                items.forEach(item => {
+                    const text = item.querySelector('span:last-child').textContent.toLowerCase();
+                    if (text.includes(val.toLowerCase())) {
+                        item.style.display = 'flex';
+                        hasMatch = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                if (val && !hasMatch) categoryList.style.display = 'none';
+                // Show list if empty to allow browsing
+                 else if (val === '') categoryList.style.display = 'block';
             });
-        }
 
-        nameInput.addEventListener('input', (e) => {
-            const val = e.target.value;
-            updateBadges(val);
-            
-            // Filter List
-            const items = categoryList.querySelectorAll('.option-item');
-            let hasMatch = false;
-            items.forEach(item => {
-                const text = item.querySelector('span:last-child').textContent.toLowerCase();
-                if (text.includes(val.toLowerCase())) {
-                    item.style.display = 'flex';
-                    hasMatch = true;
-                } else {
-                    item.style.display = 'none';
+            // Toggle List
+            nameInput.addEventListener('click', () => {
+                 if (nameInput.value === '') {
+                     const isVisible = categoryList.style.display === 'block';
+                     categoryList.style.display = isVisible ? 'none' : 'block';
+                     // Reset filters
+                     const items = categoryList.querySelectorAll('.option-item');
+                     items.forEach(i => i.style.display = 'flex');
+                 }
+            });
+
+            // 2. Select Existing Category - attach to option items
+            const optionItems = categoryList.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const name = item.querySelector('span:last-child').textContent;
+                    const color = item.dataset.color || 'blue';
+                    
+                    nameInput.value = name;
+                    updateBadges(name);
+                    
+                    // Select the radio button
+                    const radio = modal.querySelector(`input[name="category_color"][value="${color}"]`);
+                    if (radio) radio.checked = true;
+
+                    categoryList.style.display = 'none';
+                });
+            });
+
+            // Combo toggle button
+            const comboToggle = modal.querySelector('.combo-toggle');
+            if (comboToggle) {
+                comboToggle.addEventListener('click', () => {
+                    const isVisible = categoryList.style.display === 'block';
+                    categoryList.style.display = isVisible ? 'none' : 'block';
+                    // Reset filters
+                    const items = categoryList.querySelectorAll('.option-item');
+                    items.forEach(i => i.style.display = 'flex');
+                });
+            }
+
+            // 3. Click Outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.combo-box-wrapper')) {
+                    categoryList.style.display = 'none';
                 }
             });
-            
-            if (val && !hasMatch) categoryList.style.display = 'none';
-            // Show list if empty to allow browsing
-             else if (val === '') categoryList.style.display = 'block';
-        });
-
-        // Toggle List
-        nameInput.addEventListener('click', () => {
-             if (nameInput.value === '') toggleCategoryList();
-        });
-
-        function toggleCategoryList() {
-            const isVisible = categoryList.style.display === 'block';
-            categoryList.style.display = isVisible ? 'none' : 'block';
-             // Reset filters
-            const items = categoryList.querySelectorAll('.option-item');
-            items.forEach(i => i.style.display = 'flex');
-        }
-
-        // 2. Select Existing Category
-        function selectCategory(name, color) {
-            nameInput.value = name;
-            updateBadges(name);
-            
-            // Select the radio button
-            const radio = document.querySelector(`input[name="category_color"][value="${color}"]`);
-            if (radio) radio.checked = true;
-
-            categoryList.style.display = 'none';
-        }
-
-        // 3. Click Outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.combo-box-wrapper')) {
-                categoryList.style.display = 'none';
-            }
-        });
+        })();
     </script>
 </div>
