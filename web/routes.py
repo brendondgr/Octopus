@@ -65,8 +65,10 @@ def create_project():
     db.session.add(new_project)
     db.session.commit()
     
-    # Return the encoded card to be appended to the Active column
-    return render_template('components/project_card.html', project=new_project)
+    # Return the encoded card and trigger count update
+    response = make_response(render_template('components/project_card.html', project=new_project))
+    response.headers['HX-Trigger-After-Settle'] = json.dumps({"project-updated": {}, "timeline-updated": {}})
+    return response
 
 @bp.route('/project/<int:project_id>/edit', methods=['GET'])
 def edit_project_modal(project_id):
@@ -145,6 +147,11 @@ def update_project(project_id):
     response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}})
     return response
 
+@bp.route('/project/<int:project_id>/delete/confirm', methods=['GET'])
+def delete_project_confirm(project_id):
+    project = Project.query.get_or_404(project_id)
+    return render_template('components/modals/delete_project.html', project=project)
+
 @bp.route('/project/<int:project_id>', methods=['DELETE'])
 def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
@@ -152,7 +159,7 @@ def delete_project(project_id):
     db.session.commit()
     
     response = make_response('')
-    response.headers['HX-Trigger'] = json.dumps({"timeline-updated": {}, "project-updated": {}})
+    response.headers['HX-Trigger-After-Settle'] = json.dumps({"timeline-updated": {}, "project-updated": {}})
     return response
 
 
@@ -243,6 +250,11 @@ def toggle_goal(goal_id):
     response.headers['HX-Trigger'] = json.dumps(trigger_data)
     return response
 
+
+@bp.route('/goal/<int:goal_id>/delete/confirm', methods=['GET'])
+def delete_goal_confirm(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    return render_template('components/modals/delete_goal.html', goal=goal)
 
 @bp.route('/goal/<int:goal_id>', methods=['DELETE'])
 def delete_goal(goal_id):

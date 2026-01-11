@@ -1,0 +1,34 @@
+<div class="modal-backdrop delete-confirm-backdrop" onclick="this.remove()">
+    <div class="modal modal-sm" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Delete Project</h3>
+            <button class="btn-icon" onclick="this.closest('.delete-confirm-backdrop').remove()">×</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Are you sure you want to delete "<strong>{{ project.title }}</strong>"?</p>
+            {% if project.goals|length > 0 %}
+                <p class="warning-text">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.25rem;">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    This will also delete all {{ project.goals|length }} goal{% if project.goals|length > 1 %}s{% endif %} in this project.
+                </p>
+            {% endif %}
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="this.closest('.delete-confirm-backdrop').remove()">Cancel</button>
+            <button type="button" 
+                    class="btn-danger"
+                    hx-delete="/project/{{ project.id }}"
+                    hx-target="[data-id='{{ project.id }}']" 
+                    hx-swap="delete"
+                    hx-on::after-request="document.querySelectorAll('.modal-backdrop').forEach(m => m.remove())">
+                Delete Project
+            </button>
+        </div>
+    </div>
+</div>

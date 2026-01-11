@@ -42,6 +42,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (evt.target.id === 'modal-container') {
             initTabs(evt.target);
         }
+
+        // Goal insertion reordering: ensure new goals appear before completed goals
+        const goalsList = evt.target.closest?.('.goals-list');
+        if (goalsList && evt.detail?.requestConfig?.verb === 'post') {
+            const allGoals = goalsList.querySelectorAll('.goal-item');
+            if (allGoals.length > 0) {
+                const newGoal = allGoals[allGoals.length - 1]; // Last added (appended via beforeend)
+
+                // Only reorder if the new goal is not completed
+                if (newGoal && !newGoal.classList.contains('completed')) {
+                    // Find first completed goal
+                    const firstCompleted = goalsList.querySelector('.goal-item.completed');
+                    if (firstCompleted) {
+                        goalsList.insertBefore(newGoal, firstCompleted);
+                    }
+                }
+            }
+        }
     });
 });
 

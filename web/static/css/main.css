@@ -634,6 +634,24 @@ header .container {
     color: var(--color-text-main);
 }
 
+.btn-danger {
+    background: var(--cat-red-bg);
+    color: var(--cat-red-text);
+    border: 1px solid var(--cat-red-border);
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: var(--cat-red-border);
+    color: white;
+    transform: scale(1.02);
+}
+
 /* Modals */
 .modal-backdrop {
     position: fixed;
@@ -672,6 +690,27 @@ header .container {
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 2rem;
+}
+
+.modal-sm {
+    max-width: 400px;
+}
+
+.modal-body {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.modal-body p {
+    margin-bottom: 0.75rem;
+}
+
+.warning-text {
+    color: var(--cat-orange-text);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 /* Forms */

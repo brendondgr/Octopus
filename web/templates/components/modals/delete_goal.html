@@ -1,0 +1,25 @@
+<div class="modal-backdrop delete-confirm-backdrop" onclick="this.remove()">
+    <div class="modal modal-sm" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Delete Goal</h3>
+            <button class="btn-icon" onclick="this.closest('.delete-confirm-backdrop').remove()">×</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Are you sure you want to delete goal "<strong>{{ goal.title }}</strong>"?</p>
+            <p class="warning-text" style="margin-top: 0.5rem;">This action cannot be undone.</p>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="this.closest('.delete-confirm-backdrop').remove()">Cancel</button>
+            <button type="button" 
+                    class="btn-danger"
+                    hx-delete="/goal/{{ goal.id }}"
+                    hx-target="#goal-{{ goal.id }}" 
+                    hx-swap="delete"
+                    hx-on::after-request="document.querySelectorAll('.delete-confirm-backdrop').forEach(m => m.remove())">
+                Delete Goal
+            </button>
+        </div>
+    </div>
+</div>
