@@ -26,7 +26,7 @@
                     hx-delete="/project/{{ project.id }}"
                     hx-target="[data-id='{{ project.id }}']" 
                     hx-swap="delete"
-                    hx-on::after-request="document.querySelectorAll('.modal-backdrop').forEach(m => m.remove())">
+                    hx-on::after-settle="document.querySelectorAll('.modal-backdrop').forEach(m => m.remove())">
                 Delete Project
             </button>
         </div>
